@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 
 namespace TecAlliance.Carpool.Data.Models
 {
-    public class Carpool
+    public class Carpools
     {
         public string CarpoolName { get; set; }
         public string Start { get; set; }
         public string Destination { get; set; }
         public string Time { get; set; }
-        public string Seatcount { get; set; }
+        public int Seatcount { get; set; }
         public string ExistenceOfDriver { get; set; }
-        public string UserName { get; set; }
-        public Carpool(string carpoolName, string start, string destination, string time, string seatcount, string existenceOfDriver, string userName)
+        
+        //public string Passengers { get; set; }
+        public string Passengers { get; set; }
+
+        //Ovverride standard constructor
+        public Carpools(string carpoolName, string start, string destination, string time, int seatcount, string existenceOfDriver, string userName)
         {
             CarpoolName = carpoolName;
             Start = start;
@@ -23,7 +27,11 @@ namespace TecAlliance.Carpool.Data.Models
             Time = time;
             Seatcount = seatcount;
             ExistenceOfDriver = existenceOfDriver;
-            UserName = userName;
+            Passengers = userName;
+        }
+        //Standardconstructor for creating new object without specific values
+        public Carpools()
+        { 
         }
     }
 }

@@ -21,5 +21,9 @@ namespace TecAlliance.Carpool.Data.Models
             Password = password;
 
         }
+        public Driver()
+        {
+                
+        }
     }
 }

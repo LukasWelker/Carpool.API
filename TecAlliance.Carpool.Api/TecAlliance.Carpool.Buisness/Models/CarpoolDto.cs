@@ -12,11 +12,11 @@ namespace TecAlliance.Carpool.Buisness.Models
         public string Start { get; set; }
         public string Destination {get; set; }
         public string Time { get; set; }
-        public string Seatcount { get; set; }
+        public int Seatcount { get; set; }
         public string ExistenceOfDriver { get; set; }
         public string UserName  { get; set; }
 
-        public CarpoolDto(string carpoolName, string start, string destination, string time, string seatcount, string existenceOfDriver, string userName)
+        public CarpoolDto(string carpoolName, string start, string destination, string time, int seatcount, string existenceOfDriver, string userName)
         {
             CarpoolName = carpoolName;
             Start = start;
