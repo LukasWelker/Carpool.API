@@ -26,11 +26,9 @@ namespace T_ecAllianceCarpoolAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PassengerDto>> Post(PassengerDto driverDto)
         {
-            driverBusinessService.AddDriver(driverDto);
-            
+            return driverBusinessService.AddDriver(driverDto);
             //CreatedAtActtion 
-            return NoContent();
-            
+             
         }
     }
 }

@@ -8,26 +8,28 @@ namespace TecAlliance.Carpool.Data.Models
 {
     public class Carpools
     {
+
+        public int CarpoolId { get; set; }
         public string CarpoolName { get; set; }
         public string Start { get; set; }
         public string Destination { get; set; }
         public string Time { get; set; }
         public int Seatcount { get; set; }
         public string ExistenceOfDriver { get; set; }
-        
-        //public string Passengers { get; set; }
-        public string Passengers { get; set; }
+        public List<int> PassengerIds{ get; set; }
 
         //Ovverride standard constructor
-        public Carpools(string carpoolName, string start, string destination, string time, int seatcount, string existenceOfDriver, string userName)
+        public Carpools(int carpoolId, string carpoolName, string start, string destination, string time, int seatcount,
+            string existenceOfDriver, List<int> passengerIds)
         {
+            CarpoolId = carpoolId;
             CarpoolName = carpoolName;
             Start = start;
             Destination = destination;
             Time = time;
             Seatcount = seatcount;
             ExistenceOfDriver = existenceOfDriver;
-            Passengers = userName;
+            PassengerIds = passengerIds;
         }
         //Standardconstructor for creating new object without specific values
         public Carpools()

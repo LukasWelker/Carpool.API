@@ -13,7 +13,7 @@ namespace TecAlliance.Carpool.Buisness.Services
         {
             driverDataService = new DriverDataService();
         }
-        public void AddDriver(PassengerDto driverDto)
+        public PassengerDto AddDriver(PassengerDto driverDto)
         {
             //Basic Errorhandling
             if (string.IsNullOrEmpty(driverDto.FirstName) || string.IsNullOrEmpty(driverDto.LastName) || string.IsNullOrEmpty(driverDto.Password))
@@ -28,24 +28,29 @@ namespace TecAlliance.Carpool.Buisness.Services
             {
                 throw new Exception("Passwort zu kurz");
             }
-            else if (driverDto.Password.Length >= 5)
+            else
             {
-                Driver driver = ConvertDriverDtoToDriver(driverDto);
+                Passenger driver = ConvertDriverDtoToDriver(driverDto);
                 driverDataService.AddNewDriverToCsv(driver);
+                PassengerDto passengerDto = ConvertDriverToDriverDto(driver);
+                return passengerDto;
             }
+            
+           
         }
-        public Driver ConvertDriverDtoToDriver(PassengerDto driverDto)
+        public Passenger ConvertDriverDtoToDriver(PassengerDto driverDto)
         {
-            var convertedDriver = new Driver(driverDto.FirstName, driverDto.LastName, driverDto.Password);
+            var convertedDriver = new Passenger(driverDto.Id, driverDto.FirstName, driverDto.LastName, driverDto.Password);
             return convertedDriver;
         }
+
         public PassengerDto GetSpecificPassenger(int Id)
         {
             if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv"))
             {
                 //var driver = new Driver();
                 //Um auf einen Rückgabewert der Method zuzugreifen muss ich eine neue Variable in diesem Fall foo intialisieren
-                Driver foo = driverDataService.SearchForSpecificPassengerInCsvAndReadIt(Id);
+                Passenger foo = driverDataService.SearchForSpecificPassengerInCsvAndReadIt(Id);
                 PassengerDto passenger = ConvertDriverToDriverDto(foo);
                 return passenger;
             }
@@ -58,9 +63,9 @@ namespace TecAlliance.Carpool.Buisness.Services
         {
             if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv"))
             {
-                List<Driver> everyPassenger = driverDataService.DisplayEveryPassenger();
+                List<Passenger> everyPassenger = driverDataService.DisplayEveryPassenger();
                 List<PassengerDto> passes = new List<PassengerDto>();
-                foreach (Driver driver in everyPassenger)
+                foreach (Passenger driver in everyPassenger)
                 {
                     PassengerDto passenger = ConvertDriverToDriverDto(driver);
                     passes.Add(passenger);
@@ -72,12 +77,12 @@ namespace TecAlliance.Carpool.Buisness.Services
                 throw new ArgumentException("Die Datei ist leider nicht vorhanden");
             }
         }
-        public PassengerDto ConvertDriverToDriverDto(Driver driver)
+        public PassengerDto ConvertDriverToDriverDto(Passenger driver)
         {
-            var convertedDriverDto = new PassengerDto(driver.FirstName, driver.LastName, driver.Password);
+            var convertedDriverDto = new PassengerDto(driver.Id,driver.FirstName, driver.LastName, driver.Password);
             return convertedDriverDto;
         }
-        public List<PassengerDto> ConvertDriverListToPassengerList(List<Driver> fo)
+        public List<PassengerDto> ConvertDriverListToPassengerList(List<Passenger> fo)
         {
             var convertedDriverList = new List<PassengerDto>();
             return convertedDriverList;

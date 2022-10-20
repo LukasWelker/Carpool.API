@@ -9,25 +9,27 @@ namespace TecAlliance.Carpool.Data.Services
 {
     public class DriverDataService
     {
-        private int Id = 0;
-        public void AddNewDriverToCsv(Driver driver)
+        private string driversPath = TecAlliance.Carpool.Data.Properties.Resources.DriverCsvPath;
+        private  int baseId = 0;
+        public void AddNewDriverToCsv(Passenger driver)
         //public void AddNewDriverToCsv(string firstName, string lastName, string password)
         {
             if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv"))
             {
-                var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+                var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", Encoding.UTF8);
                 if (readText != null && readText.Length > 0)
                 {
-                    Id = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
+                    baseId = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
+                    driver.Id = baseId;
                 }
             }
-            var driverscsv = $"{Id};{driver.FirstName};{driver.LastName};{driver.Password}\n";
+            var driverscsv = $"{driver.Id};{driver.FirstName};{driver.LastName};{driver.Password}\n";
             File.AppendAllText("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", driverscsv, Encoding.UTF8);
         }
-        public Driver SearchForSpecificPassengerInCsvAndReadIt(int Id)
+        public Passenger SearchForSpecificPassengerInCsvAndReadIt(int Id)
         {
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", Encoding.UTF8);
-            var passengerToReturn = new Driver();
+            var passengerToReturn = new Passenger();
             if (readText != null && readText.Length > 0)
             {
                 readText.ToList();
@@ -35,6 +37,7 @@ namespace TecAlliance.Carpool.Data.Services
                 foreach(var passenger in filteredPassenger)
                 {
                     var splittedPassenger = passenger.Split(';');
+                    passengerToReturn.Id = Convert.ToInt32(splittedPassenger[0]);
                     passengerToReturn.FirstName = splittedPassenger[1];
                     passengerToReturn.LastName = splittedPassenger[2];
                     passengerToReturn.Password = splittedPassenger[3];
@@ -43,15 +46,15 @@ namespace TecAlliance.Carpool.Data.Services
             }
             return passengerToReturn;
         }
-        public List<Driver> DisplayEveryPassenger()
+        public List<Passenger> DisplayEveryPassenger()
         {
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", Encoding.UTF8);
-            List<Driver> listOfPassengers = new List<Driver>();
+            List<Passenger> listOfPassengers = new List<Passenger>();
             foreach(var passenger in readText)
             {
                 var splittedPassenger = passenger.Split(";");
 
-                var finalPassenger = new Driver(splittedPassenger[1], splittedPassenger[2], splittedPassenger[3]);
+                var finalPassenger = new Passenger(Convert.ToInt32(splittedPassenger[0]), splittedPassenger[1], splittedPassenger[2], splittedPassenger[3]);
                 listOfPassengers.Add(finalPassenger);
             }
             return listOfPassengers;

@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace TecAlliance.Carpool.Data.Models
 {
-    public class Driver
+    public class Passenger
     {
-
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
 
 
-        public Driver(string firstName, string lastName, string password)
+        public Passenger(int id, string firstName, string lastName, string password)
         {
+            Id = id;    
             FirstName = firstName;
             LastName = lastName;
             Password = password;
-
         }
-        public Driver()
+        public Passenger()
         {
                 
         }
