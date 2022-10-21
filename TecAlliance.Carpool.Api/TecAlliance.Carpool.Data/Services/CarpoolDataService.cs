@@ -98,16 +98,14 @@ namespace TecAlliance.Carpool.Data.Services
             //Delete Carpool nach der Pause machen
             int IdOfCarpool = Id;
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
-            if (readText != null && readText.Length > 0)
-            {
-                List<string> readList = ReadCarPoolList();
-                var matchingCarpool = readList.FirstOrDefault(x => x.Split(';')[Id] == IdOfCarpool.ToString());
-                var CarPoolOriginal = readList
-                       .Where(x => x
-                           .Split(';')[Id] != IdOfCarpool.ToString())
-                       .ToList();
-
-            }
+            List<string> readList = ReadCarPoolList();
+            var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == IdOfCarpool.ToString());
+            var carPool = readList.Where(x => x.Split(';')[0] != IdOfCarpool.ToString()).ToList();
+           carPool.Add(MatchingCarPool);
+            carPool.Remove(MatchingCarPool);
+            var orderdCarpool = carPool.OrderBy(x => x.Split(';')[0]);
+            File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+            File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", orderdCarpool);
         }
     }
 }
