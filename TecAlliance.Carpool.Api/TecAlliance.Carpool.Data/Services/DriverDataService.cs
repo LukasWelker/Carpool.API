@@ -59,6 +59,10 @@ namespace TecAlliance.Carpool.Data.Services
             }
             return listOfPassengers;
         }
+        public void DeleteAllPassengers()
+        {
+            File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv");
+        }
 
     }
 }

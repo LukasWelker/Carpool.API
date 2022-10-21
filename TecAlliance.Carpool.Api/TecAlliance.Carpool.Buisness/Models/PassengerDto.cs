@@ -12,7 +12,7 @@ namespace TecAlliance.Carpool.Buisness.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
-        
+
 
         public PassengerDto(int id, string firstName, string lastName, string password)
         {
@@ -20,7 +20,10 @@ namespace TecAlliance.Carpool.Buisness.Models
             FirstName = firstName;
             LastName = lastName;
             Password = password;
-            
+        }
+        public PassengerDto()
+        {
+
         }
     }
 }

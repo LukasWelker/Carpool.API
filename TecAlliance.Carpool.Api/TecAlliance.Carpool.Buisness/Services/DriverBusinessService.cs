@@ -5,11 +5,12 @@ using TecAlliance.Carpool.Data.Services;
 
 namespace TecAlliance.Carpool.Buisness.Services
 {
-    public class DriverBusinessService
+    public class PassengerBusinessService
     {
+        private int count = 0;
         private readonly DriverDataService driverDataService;
         public static Regex nameRegex = new Regex("[A-Za-zÀ-ȕ0-9]");
-        public DriverBusinessService()
+        public PassengerBusinessService()
         {
             driverDataService = new DriverDataService();
         }
@@ -35,8 +36,6 @@ namespace TecAlliance.Carpool.Buisness.Services
                 PassengerDto passengerDto = ConvertDriverToDriverDto(driver);
                 return passengerDto;
             }
-            
-           
         }
         public Passenger ConvertDriverDtoToDriver(PassengerDto driverDto)
         {
@@ -46,15 +45,18 @@ namespace TecAlliance.Carpool.Buisness.Services
 
         public PassengerDto GetSpecificPassenger(int Id)
         {
+           
             if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv"))
             {
+               
                 //var driver = new Driver();
                 //Um auf einen Rückgabewert der Method zuzugreifen muss ich eine neue Variable in diesem Fall foo intialisieren
-                Passenger foo = driverDataService.SearchForSpecificPassengerInCsvAndReadIt(Id);
-                PassengerDto passenger = ConvertDriverToDriverDto(foo);
+                Passenger returnedPassenger = driverDataService.SearchForSpecificPassengerInCsvAndReadIt(Id);
+                PassengerDto passenger = ConvertDriverToDriverDto(returnedPassenger);
+               
                 return passenger;
             }
-            else
+            else 
             {
                 throw new ArgumentException("Datei existoert nicht");
             }
@@ -86,6 +88,17 @@ namespace TecAlliance.Carpool.Buisness.Services
         {
             var convertedDriverList = new List<PassengerDto>();
             return convertedDriverList;
+        }
+        public void ConnectionToDeletePassengers()
+        {
+            if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv"))
+            {
+                driverDataService.DeleteAllPassengers();
+            }
+            else
+            {
+                throw new Exception("Diese Datei wurde bereits gelöscht oder sie existiert nicht.");
+            }
         }
     }
 }

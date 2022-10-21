@@ -12,7 +12,7 @@ namespace TecAlliance.Carpool.Data.Services
 {
     public class CarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
-  
+
         private int baseId = 0;
         public void CreateNewCarpool(Carpools carpools)
         {
@@ -30,7 +30,7 @@ namespace TecAlliance.Carpool.Data.Services
             //wenn liste fertig nimm string oben und schreibe das am enbde in den string {carpools.PassengerIds}\n";
             StringBuilder finalString = new StringBuilder();
             string eachPassengerId = "";
-            foreach (int passengerId in carpools.PassengerIds )
+            foreach (int passengerId in carpools.PassengerIds)
             {
                 //Wenn der Stringbuilder nicht funktionirt einfach += schreiben
                 eachPassengerId = passengerId.ToString();
@@ -51,11 +51,8 @@ namespace TecAlliance.Carpool.Data.Services
                 foreach (var carpool in filteredUserCarPools)
                 {
                     var splittedCarpool = carpool.Split(';');
-
-
                     var foo = new List<int>();
                     foo.Add(Convert.ToInt32(splittedCarpool[7]));
-
                     carpoolToReturn.CarpoolId = Convert.ToInt32(splittedCarpool[0]);
                     carpoolToReturn.CarpoolName = splittedCarpool[1];
                     carpoolToReturn.Start = splittedCarpool[2];
@@ -67,19 +64,19 @@ namespace TecAlliance.Carpool.Data.Services
                 }
             }
             return carpoolToReturn;
-        } 
+        }
         public List<Carpools> DisplayEveryCarpool()
         {
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
             List<Carpools> listOfCarpools = new List<Carpools>();
-            
-            foreach(var line in readText)
+
+            foreach (var line in readText)
             {
                 string[] splittedCarPoolList = line.Split(';');
                 var foo = new List<int>();
                 foo.Add(Convert.ToInt32(splittedCarPoolList[7]));
                 //hiermit "baue" ich das Objekt 
-                var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]),splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
+                var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]), splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
                     splittedCarPoolList[4], Convert.ToInt32(splittedCarPoolList[5]), splittedCarPoolList[6], foo);
                 //
                 listOfCarpools.Add(carpool);
@@ -88,11 +85,29 @@ namespace TecAlliance.Carpool.Data.Services
         }
         private static List<string> ReadCarPoolList()
         {
-
             var CarPoolList = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
             List<string> readList = CarPoolList.ToList();
             return readList;
         }
-       
+        public void DeleteAllCarpools()
+        {
+            File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+        }
+        public void DeleteSpecificCarpool(int Id)
+        {
+            //Delete Carpool nach der Pause machen
+            int IdOfCarpool = Id;
+            var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+            if (readText != null && readText.Length > 0)
+            {
+                List<string> readList = ReadCarPoolList();
+                var matchingCarpool = readList.FirstOrDefault(x => x.Split(';')[Id] == IdOfCarpool.ToString());
+                var CarPoolOriginal = readList
+                       .Where(x => x
+                           .Split(';')[Id] != IdOfCarpool.ToString())
+                       .ToList();
+
+            }
+        }
     }
 }

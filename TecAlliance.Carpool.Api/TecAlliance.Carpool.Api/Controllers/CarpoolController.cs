@@ -31,10 +31,18 @@ namespace TecAlliance.Carpool.Api.Controllers
         {
             return carpoolBusinessService.GetAllCarpools();
         }
-        //[HttpDelete("{FirstName}")]
-        //public async Task<ActionResult<Carpools>> DeleteByFirstName(string FirstName)
-        //{
-        //    return carpoolBusinessService.
-        //}
+        [HttpDelete]
+        public async Task<ActionResult<CarpoolDto>> Delete()
+        {
+            carpoolBusinessService.ConnectionToDeleteAllcarpools();
+            return StatusCode(200, "Die Datei und somit alle Fahrgemeinschaften wurden erfolgreich gelöscht.");
+        }
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<CarpoolDto>> DeleteById(int Id)
+        {
+            carpoolBusinessService.ConnectionToDeleteSpecificCarpool(Id);
+            return StatusCode(200, $"Das Carpool mit der Id: {Id} wurde erfolgreich gelöscht");
+        }
+
     }
 }

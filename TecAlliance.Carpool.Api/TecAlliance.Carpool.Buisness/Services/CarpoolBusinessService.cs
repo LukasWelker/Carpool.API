@@ -11,10 +11,13 @@ namespace TecAlliance.Carpool.Buisness.Services
         private readonly CarpoolDataService carpoolDataService;
         // reggex durchläfut eine Liste und checkt ob eine bedinung aus chars erfüllt ist
         public static Regex regex = new Regex("^\\d+$");
-        public DriverBusinessService driverBusinessService;
+        //Variablen Deklaration
+        public PassengerBusinessService driverBusinessService;
         public CarpoolBusinessService()
         {
+            //Hier findet die Initialisierung statt
             carpoolDataService = new CarpoolDataService();
+            driverBusinessService = new PassengerBusinessService();
         }
         public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos)
         {
@@ -36,7 +39,6 @@ namespace TecAlliance.Carpool.Buisness.Services
                 CarpoolDto carpool = ConvertCarpoolToCarpoolDto(carpools);
                 return carpool;
             }
-
         }
         public CarpoolDto GetSpecificCarpool(int Id)
         {
@@ -74,34 +76,62 @@ namespace TecAlliance.Carpool.Buisness.Services
         }
         public Carpools ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
         {
-            var foo = new List<int>();
-            foo.Add(carpoolDtos.CarpoolId);
+            //Erstellung eine rneure intListe, wird benötigt für die Befüllung des Carpoolobjekts
+            var intListOfIds = new List<int>();
+            intListOfIds.Add(carpoolDtos.CarpoolId);
             var convertedCarpools = new Carpools(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
-                carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, foo);
+                carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, intListOfIds);
             return convertedCarpools;
         }
         public CarpoolDto ConvertCarpoolToCarpoolDto(Carpools carpools)
         {
-            List<PassengerInfoDto> baa = new List<PassengerInfoDto>();
-
+            //Erstellung einer neuen PassengerInfoDtoListeaus objekten
+            List<PassengerInfoDto> newPassengerInfoList = new List<PassengerInfoDto>();
+            //für jede Id in der Liste aus PassengerIds
             foreach (var id in carpools.PassengerIds)
             {
-                //Schafft Probleme, da ich darauf nicht zugreifen kann
-                //wird benötigt um die Id und den Namen zu bekommen
-                //Mögliche Lösung Methode schreiben, die den PassengerDto returnt!!!
+                //Mögliche Lösung driverBusinessService initialsiieren!!!
+                //Benötigt, um den Namen zu erhalten
                 var passenger = driverBusinessService.GetSpecificPassenger(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerDetail(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerInfoDot(id);
-
+                // baue das Objekt mithilfe der Id, bekomme ich übergeben und dem Namen aus GetSpecificPassenger
                 var passengerDto = new PassengerInfoDto() { PassengerId = passenger.Id, PassengerName = $"{passenger.FirstName} {passenger.LastName}" };
-
-                baa.Add(passengerDto);
+                newPassengerInfoList.Add(passengerDto);
             }
-
             var convertedCarpoolDto = new CarpoolDto(carpools.CarpoolId, carpools.CarpoolName, carpools.Start,
-                carpools.Destination, carpools.Time, carpools.Seatcount, carpools.ExistenceOfDriver, baa);
+                carpools.Destination, carpools.Time, carpools.Seatcount, carpools.ExistenceOfDriver, newPassengerInfoList);
             //Liste aus Objekten muss ich hinzufügen diese:  List<PassengerInfo> passengerInfos
             return convertedCarpoolDto;
         }
+
+        public PassengerDto GetPassengerDto(PassengerDto passengerDto)
+        {
+            PassengerDto passenger = new PassengerDto();
+            return passenger;
+        }
+        public void ConnectionToDeleteAllcarpools()
+        {
+            if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            {
+                carpoolDataService.DeleteAllCarpools();
+            }
+            else
+            {
+                throw new Exception("Diese Datei existiert nicht oder wurde bereits gelöscht.");
+            }
+        }
+        public void ConnectionToDeleteSpecificCarpool(int Id)
+        {
+            if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            {
+                carpoolDataService.DeleteSpecificCarpool(Id);
+            }
+            else
+            {
+                throw new Exception("Diese Datei exitiert leider nicht");
+            }
+        }
+
     }
 }

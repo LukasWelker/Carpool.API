@@ -5,12 +5,12 @@ namespace T_ecAllianceCarpoolAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class DriverController : ControllerBase
+    public class PassengerController : ControllerBase
     {
-        DriverBusinessService driverBusinessService;
-        public DriverController()
+        PassengerBusinessService driverBusinessService;
+        public PassengerController()
         {
-             driverBusinessService = new DriverBusinessService();
+             driverBusinessService = new PassengerBusinessService();
         }
         [HttpGet("{Id}")]
         public async Task<ActionResult<PassengerDto>> GetById(int Id)
@@ -28,7 +28,12 @@ namespace T_ecAllianceCarpoolAPI.Controllers
         {
             return driverBusinessService.AddDriver(driverDto);
             //CreatedAtActtion 
-             
+        }
+        [HttpDelete]
+        public async Task<ActionResult<PassengerDto>> Delete()
+        {
+            driverBusinessService.ConnectionToDeletePassengers();
+            return StatusCode(200, "Es wurden erfolgreich alle Passenger gelöscht");
         }
     }
 }
