@@ -15,10 +15,9 @@ namespace TecAlliance.Carpool.Api.Controllers
             carpoolBusinessService = new CarpoolBusinessService();
         }
         [HttpPost]
-        public async Task<ActionResult<CarpoolDto>> Post(CarpoolDto carpoolDtos)
+        public async Task<ActionResult<CarpoolDto>> Post(CarpoolDto carpoolDtos, int userId)
         {
-            return carpoolBusinessService.CreateNewCarpool(carpoolDtos);
-            
+            return carpoolBusinessService.CreateNewCarpool(carpoolDtos,userId);
         }
 
         [HttpGet("{Id}")]
@@ -43,6 +42,25 @@ namespace TecAlliance.Carpool.Api.Controllers
             carpoolBusinessService.ConnectionToDeleteSpecificCarpool(Id);
             return StatusCode(200, $"Das Carpool mit der Id: {Id} wurde erfolgreich gelöscht");
         }
+        [HttpPut("join")]
+        public async Task<ActionResult<CarpoolDto>> PutByIdJoin(int carpoolId, int userId)
+        {
+            carpoolBusinessService.ConnectionToAddUserToCarpool(carpoolId, userId);
+            return StatusCode(200, $"Zu dem Carpool mit der Id: {carpoolId}, wurde der User mit der Id: {userId} erfolgreich hinzugefügt.");
+        }
+        [HttpPut("leave")]
+        public  async Task<ActionResult<CarpoolDto>> PutByIdLeave(int carpoolId, int userId)
+        {
+            carpoolBusinessService.ConnectionToLeaveCarpool(carpoolId, userId);
+            return StatusCode(200, $"Zu dem Carpool mit der Id: {carpoolId}, wurde der User mit der Id: {userId} erfolgreich entefernt.");
+        }
+        [HttpPut("CarpoolName")]
+        public async Task<ActionResult<CarpoolDto>> PutChangeCarpoolName(string carpoolName)
+        {
+            carpoolBusinessService.ConnectionToChangeCarpoolName(carpoolName);
+            return StatusCode(200, "Carpoolname wurde erfolgreich geändert.");
+        }
+
 
     }
 }

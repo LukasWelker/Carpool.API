@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Data.Services
@@ -14,7 +7,7 @@ namespace TecAlliance.Carpool.Data.Services
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
 
         private int baseId = 0;
-        public void CreateNewCarpool(Carpools carpools)
+        public void CreateNewCarpool(Carpools carpools, int userId)
         {
             if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
             {
@@ -29,30 +22,36 @@ namespace TecAlliance.Carpool.Data.Services
             // nehme jede id =?> speicher in einen string
             //wenn liste fertig nimm string oben und schreibe das am enbde in den string {carpools.PassengerIds}\n";
             StringBuilder finalString = new StringBuilder();
-            string eachPassengerId = "";
+            string eachPassengerId = $"{userId}";
+            int passengerId2 = userId;
             foreach (int passengerId in carpools.PassengerIds)
             {
                 //Wenn der Stringbuilder nicht funktionirt einfach += schreiben
-                eachPassengerId = passengerId.ToString();
-                finalString.Append($"{passengerId},");
+                eachPassengerId = passengerId2.ToString();
+                finalString.Append($"{passengerId2},");
             }
-            var finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
+            string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
                 $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{eachPassengerId}\n";
             File.AppendAllText("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", finalCarpool);
         }
         public Carpools SearchForSpecificCarpoolInCsvAndReadIt(int Id)
         {
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+            //create new object of Carpool class to build the object afterwards new
             var carpoolToReturn = new Carpools();
             if (readText != null && readText.Length > 0)
             {
-                List<string> readList = ReadCarPoolList();
+                //create new List to go trough the List with Linq
+                List<string> readList = ReadCarPoolList("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+                //search in the List for line which contains the Id
                 var filteredUserCarPools = readList.Where(x => x.Contains(Id.ToString()));
+                // build the object foreach matching line in the List
                 foreach (var carpool in filteredUserCarPools)
                 {
+                    //splitting carpool in each "part" in given example Id, Name, Time etc
                     var splittedCarpool = carpool.Split(';');
                     var foo = new List<int>();
-                    foo.Add(Convert.ToInt32(splittedCarpool[7]));
+                    //building the new Carpool object
                     carpoolToReturn.CarpoolId = Convert.ToInt32(splittedCarpool[0]);
                     carpoolToReturn.CarpoolName = splittedCarpool[1];
                     carpoolToReturn.Start = splittedCarpool[2];
@@ -61,6 +60,7 @@ namespace TecAlliance.Carpool.Data.Services
                     carpoolToReturn.Seatcount = Convert.ToInt32(splittedCarpool[5]);
                     carpoolToReturn.ExistenceOfDriver = splittedCarpool[6];
                     carpoolToReturn.PassengerIds = foo;
+                    foo.Add(Convert.ToInt32(splittedCarpool[7]));
                 }
             }
             return carpoolToReturn;
@@ -69,7 +69,6 @@ namespace TecAlliance.Carpool.Data.Services
         {
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
             List<Carpools> listOfCarpools = new List<Carpools>();
-
             foreach (var line in readText)
             {
                 string[] splittedCarPoolList = line.Split(';');
@@ -83,9 +82,9 @@ namespace TecAlliance.Carpool.Data.Services
             }
             return listOfCarpools;
         }
-        private static List<string> ReadCarPoolList()
+        public  List<string> ReadCarPoolList(string path)
         {
-            var CarPoolList = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+            var CarPoolList = File.ReadAllLines(path, Encoding.UTF8);
             List<string> readList = CarPoolList.ToList();
             return readList;
         }
@@ -98,14 +97,91 @@ namespace TecAlliance.Carpool.Data.Services
             //Delete Carpool nach der Pause machen
             int IdOfCarpool = Id;
             var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
-            List<string> readList = ReadCarPoolList();
+            List<string> readList = ReadCarPoolList("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
             var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == IdOfCarpool.ToString());
-            var carPool = readList.Where(x => x.Split(';')[0] != IdOfCarpool.ToString()).ToList();
-           carPool.Add(MatchingCarPool);
+            List<string> carPool = readList.Where(x => x.Split(';')[0] != IdOfCarpool.ToString()).ToList();
+            carPool.Add(MatchingCarPool);
             carPool.Remove(MatchingCarPool);
             var orderdCarpool = carPool.OrderBy(x => x.Split(';')[0]);
             File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
             File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", orderdCarpool);
         }
+        
+        public void AddUserToCarpool(int carpoolId, int userId)
+        {
+            string[] CarPoolList = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+            List<string> readList = CarPoolList.ToList();
+            var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == carpoolId.ToString()) + "," + userId;
+            var CarPool = readList.Where(x => x.Split(';')[0] != carpoolId.ToString()).ToList();
+            CarPool.Add(MatchingCarPool);
+            var orderdCarpool = CarPool;
+            File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+            File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", orderdCarpool);
+        }
+
+        public void LeaveCarpool(int carpoolId, int userId)
+        {
+            List<string> readList = ReadCarPoolList("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+            //So kann man was entfernen und hinzufügen in einer CSV Datei
+            //Man sucht in der Csv Datei nach der Zeile mit der passenden Carpool Id
+            var MatchingCarPool = readList
+                .FirstOrDefault(x => x
+                    .Split(';')[0] == carpoolId.ToString());
+            //Sucht/Liest alle anderen Zeilen, die nicht gesucht sind
+            var carPoolOriginal = readList
+                .Where(x => x
+                    .Split(';')[0] != carpoolId.ToString())
+                .ToList();
+            //Splitet die passende Zeile in einzelne in strings
+            var splitedMatchingCarPool = MatchingCarPool.Split(';');
+            //Splitted die gewünschte Zeile intern nach ',' um einen einzelnen Eintrag zu removen und um nur den einen Eintrag in der passenden Zeile zu bearbeiten
+            var SplitSearchedLine = splitedMatchingCarPool[7].Split(',').ToList();
+            //Suche alle Einträge raus, die nicht der UserId entsprechen
+            var differntiateListInput = SplitSearchedLine.Where(x => !x.Equals(userId.ToString()));
+            //Ersellt einen String (mit der JoinMethod) ohne die UserId, da  DifferntiateListInput alle Ids außer die userid beinhaltet
+            var recreateLine = string.Join(",", differntiateListInput);
+            //Schreibt die Zeile neu , wie man sie braucht
+            var wishResultSplitedMatchingCarPool = $"{splitedMatchingCarPool[0]};{splitedMatchingCarPool[1]};{splitedMatchingCarPool[2]};{splitedMatchingCarPool[3]};{splitedMatchingCarPool[4]};{splitedMatchingCarPool[5]};" +
+                $"{splitedMatchingCarPool[6]}; {recreateLine}";
+            //Fügt alle Zeilen, die man aus der Liste nicht braucht mit der einen veränderten zusammen in eine Liste
+            carPoolOriginal.Add(wishResultSplitedMatchingCarPool);
+            //Löscht die ganze Liste um in Zeile 395 die Liste wie in Zeile 392 zusammengefügt in eine Csv Datei zu schreiben
+            File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+            File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", carPoolOriginal);
+            InstantDeletionOfCarPoolIfEmpty(carpoolId);
+        }
+
+        public void ChangeCarpoolName(string carpoolName)
+        {
+
+        }
+        public void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
+        {
+            string[] CarPoolList = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
+            var id = Convert.ToInt32(carpoolId);
+            //Uwandlung des einzelnen Strings in Array 
+            //string[] singleCarPool = CarPoolList[id].Split(';');
+            string[] singleCarPool;
+            for (int i = 0; i < CarPoolList.Count(); i++)
+            {
+                singleCarPool = CarPoolList[i].Split(';');
+                if (singleCarPool.Length <= 8 && singleCarPool[7].Trim(' ') == string.Empty)
+                {
+                    //Ersetzt den String mit einem leeren String wenn das Array kleiner gleich 8 ist
+                    CarPoolList[id] = string.Empty;
+                    CarPoolList[id].ToList();
+                    List<string> readList = ReadCarPoolList(("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"));
+                    var CarPoolOriginal = readList
+                       .Where(x => x
+                           .Split(';')[0] != carpoolId.ToString())
+                       .ToList();
+                    CarPoolOriginal.Add(CarPoolList[id]);
+                    File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+                    File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", CarPoolOriginal);
+
+                }
+            }
+        }
+
     }
 }

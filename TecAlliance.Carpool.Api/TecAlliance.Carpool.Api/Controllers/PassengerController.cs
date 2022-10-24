@@ -32,8 +32,14 @@ namespace T_ecAllianceCarpoolAPI.Controllers
         [HttpDelete]
         public async Task<ActionResult<PassengerDto>> Delete()
         {
-            driverBusinessService.ConnectionToDeletePassengers();
+            driverBusinessService.ConnectionToDeleteAllPassengers();
             return StatusCode(200, "Es wurden erfolgreich alle Passenger gelöscht");
+        }
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<PassengerDto>> DeleteById(int Id)
+        {
+            driverBusinessService.ConnectionToDeleteSpecificPassenger(Id);
+                return StatusCode(200, $"Es wurde erfolgreich der User mit der Id: {Id} gelöscht.");
         }
     }
 }

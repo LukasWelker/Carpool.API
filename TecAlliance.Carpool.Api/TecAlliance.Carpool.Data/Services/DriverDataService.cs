@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TecAlliance.Carpool.Data.Models;
+using TecAlliance.Carpool.Data.Services;
 
 namespace TecAlliance.Carpool.Data.Services
 {
@@ -11,6 +12,12 @@ namespace TecAlliance.Carpool.Data.Services
     {
         private string driversPath = TecAlliance.Carpool.Data.Properties.Resources.DriverCsvPath;
         private  int baseId = 0;
+        public CarpoolDataService carpoolDataService;
+        public DriverDataService()
+        {
+            carpoolDataService = new CarpoolDataService();
+        }
+       
         public void AddNewDriverToCsv(Passenger driver)
         //public void AddNewDriverToCsv(string firstName, string lastName, string password)
         {
@@ -63,6 +70,18 @@ namespace TecAlliance.Carpool.Data.Services
         {
             File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv");
         }
-
+        public void DeleteSpecificPassenegrById(int Id)
+        {
+            int passengerId = Id;
+            var readText = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", Encoding.UTF8);
+            List<string> readList = carpoolDataService.ReadCarPoolList("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv");
+            var matchingPassenger = readList.FirstOrDefault(x => x.Split(';')[0] == passengerId.ToString());
+            var carPool = readList.Where(x => x.Split(';')[0] != passengerId.ToString()).ToList();
+            carPool.Add(matchingPassenger);
+            carPool.Remove(matchingPassenger);
+            var orderdPassengerList = carPool.OrderBy(x => x.Split(';')[0]);
+            // File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv");
+            File.WriteAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Drivers.csv", orderdPassengerList);
+        }
     }
 }

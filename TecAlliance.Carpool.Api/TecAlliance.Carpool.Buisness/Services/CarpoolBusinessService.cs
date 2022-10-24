@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using TecAlliance.Carpool.Buisness.Models;
 using TecAlliance.Carpool.Business.Models;
 using TecAlliance.Carpool.Data.Models;
@@ -19,7 +21,7 @@ namespace TecAlliance.Carpool.Buisness.Services
             carpoolDataService = new CarpoolDataService();
             driverBusinessService = new PassengerBusinessService();
         }
-        public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos)
+        public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos, int userId)
         {
             //basic Errorhandling
             if (string.IsNullOrEmpty(carpoolDtos.CarpoolName) || string.IsNullOrEmpty(carpoolDtos.Start) || string.IsNullOrEmpty(carpoolDtos.Destination) || string.IsNullOrEmpty(carpoolDtos.Time) ||
@@ -35,7 +37,7 @@ namespace TecAlliance.Carpool.Buisness.Services
             else
             {
                 Carpools carpools = ConvertCarpoolDtosToCarpools(carpoolDtos);
-                carpoolDataService.CreateNewCarpool(carpools);
+                carpoolDataService.CreateNewCarpool(carpools, userId);
                 CarpoolDto carpool = ConvertCarpoolToCarpoolDto(carpools);
                 return carpool;
             }
@@ -90,8 +92,6 @@ namespace TecAlliance.Carpool.Buisness.Services
             //für jede Id in der Liste aus PassengerIds
             foreach (var id in carpools.PassengerIds)
             {
-                //Mögliche Lösung driverBusinessService initialsiieren!!!
-                //Benötigt, um den Namen zu erhalten
                 var passenger = driverBusinessService.GetSpecificPassenger(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerDetail(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerInfoDot(id);
@@ -121,17 +121,75 @@ namespace TecAlliance.Carpool.Buisness.Services
                 throw new Exception("Diese Datei existiert nicht oder wurde bereits gelöscht.");
             }
         }
-        public void ConnectionToDeleteSpecificCarpool(int Id)
+        public void ConnectionToDeleteSpecificCarpool(int carpoolId)
         {
-            if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), "C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
             {
-                carpoolDataService.DeleteSpecificCarpool(Id);
+                carpoolDataService.DeleteSpecificCarpool(carpoolId);
+            }
+
+            else
+            {
+                ExecptionThatFileOrCarpoolDoesNotExist();
+            }
+        }
+        public void ConnectionToAddUserToCarpool(int carpoolId, int userId)
+        {
+            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), "C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            {
+                carpoolDataService.AddUserToCarpool(carpoolId, userId);
             }
             else
             {
-                throw new Exception("Diese Datei exitiert leider nicht");
+                ExecptionThatFileOrCarpoolDoesNotExist();
             }
         }
-
+        public void ConnectionToChangeCarpoolName(string carpoolName)
+        {
+            if(CheckIfCarpoolNameExists(carpoolName, "C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            {
+                carpoolDataService.ChangeCarpoolName(carpoolName);
+            }
+        }
+        public void ConnectionToLeaveCarpool(int carpoolId, int userId)
+        {
+            if (File.Exists("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
+            {
+                carpoolDataService.LeaveCarpool(carpoolId, userId);
+            }
+        }
+        //value can be almost everything in this example it can be carpoolId etc. and the path is alos variable but in the given example it is  the Carpoolfile.
+        private static bool CheckIfCarpoolAndPathExists(string value, string path)
+        {
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+            string[] readText = File.ReadAllLines(path, Encoding.UTF8);
+            List<string> readList = readText.ToList();
+            // untersucht jede zeile für zeile bis etwas erstes gefunden wurde, das gesplittet also, in diesem Fall der Id entspricht.
+            var filteredmeml = readText.FirstOrDefault(x => x.Split(';').First() == value);
+            if (filteredmeml != null)
+                return true;
+            return false;
+        }
+        private static bool CheckIfCarpoolNameExists(string carpoolName, string path)
+        {
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+            string[] readText = File.ReadAllLines(path, Encoding.UTF8);
+            List<string> readList = readText.ToList();
+            // untersucht jede zeile für zeile bis etwas erstes gefunden wurde, das gesplittet also, in diesem Fall der Id entspricht.
+            var filteredmeml = readText.FirstOrDefault(x => x.Split(';').Skip(1).First() == carpoolName);
+            if (filteredmeml != null)
+                return true;
+            return false;
+        }
+        private void ExecptionThatFileOrCarpoolDoesNotExist()
+        {
+            throw new Exception("Diese Datei oder die Fahrgemeinschaft exisitiert leider nicht");
+        }
     }
 }
