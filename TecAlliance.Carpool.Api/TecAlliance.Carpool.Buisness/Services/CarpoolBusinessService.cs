@@ -23,6 +23,7 @@ namespace TecAlliance.Carpool.Buisness.Services
         }
         public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos, int userId)
         {
+            carpoolDataService.DynamicPath();
             //basic Errorhandling
             if (string.IsNullOrEmpty(carpoolDtos.CarpoolName) || string.IsNullOrEmpty(carpoolDtos.Start) || string.IsNullOrEmpty(carpoolDtos.Destination) || string.IsNullOrEmpty(carpoolDtos.Time) ||
                  string.IsNullOrEmpty(carpoolDtos.ExistenceOfDriver))
@@ -144,11 +145,19 @@ namespace TecAlliance.Carpool.Buisness.Services
                 ExecptionThatFileOrCarpoolDoesNotExist();
             }
         }
-        public void ConnectionToChangeCarpoolName(string carpoolName)
+        public CarpoolDto ConnectionToChangeCarpoolName(string carpoolName, int carpoolId)
         {
             if(CheckIfCarpoolNameExists(carpoolName, "C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv"))
             {
-                carpoolDataService.ChangeCarpoolName(carpoolName);
+                Carpools carpool = carpoolDataService.ChangeCarpoolName(carpoolName, carpoolId);
+                CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool);
+                return carpoolDto;
+                    
+            }
+            else
+            {
+                throw new Exception("So nicht.");
+               
             }
         }
         public void ConnectionToLeaveCarpool(int carpoolId, int userId)

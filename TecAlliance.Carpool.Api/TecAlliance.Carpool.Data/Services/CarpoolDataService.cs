@@ -1,10 +1,12 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Data.Services
 {
     public class CarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
+
 
         private int baseId = 0;
         public void CreateNewCarpool(Carpools carpools, int userId)
@@ -82,7 +84,7 @@ namespace TecAlliance.Carpool.Data.Services
             }
             return listOfCarpools;
         }
-        public  List<string> ReadCarPoolList(string path)
+        public List<string> ReadCarPoolList(string path)
         {
             var CarPoolList = File.ReadAllLines(path, Encoding.UTF8);
             List<string> readList = CarPoolList.ToList();
@@ -106,7 +108,7 @@ namespace TecAlliance.Carpool.Data.Services
             File.Delete("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
             File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", orderdCarpool);
         }
-        
+
         public void AddUserToCarpool(int carpoolId, int userId)
         {
             string[] CarPoolList = File.ReadAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", Encoding.UTF8);
@@ -151,9 +153,43 @@ namespace TecAlliance.Carpool.Data.Services
             InstantDeletionOfCarPoolIfEmpty(carpoolId);
         }
 
-        public void ChangeCarpoolName(string carpoolName)
+        public Carpools? ChangeCarpoolName(string carpoolName, int carpoolId)
         {
 
+            Carpools newCarpool = new Carpools();
+            List<string> readList = ReadCarPoolList("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv");
+            List<string> updatedList = new List<string>();
+            foreach (string line in readList)
+            {
+                var splittedCarpool = line.Split(';');
+                var splittedPassengerIds = splittedCarpool[8].Split(',');
+                var passengerIds = new List<int>();
+                foreach (var splittedPassengerId in splittedPassengerIds)
+                {
+                    passengerIds.Add(int.Parse(splittedPassengerId));
+                }
+                if (carpoolId == Convert.ToInt32(splittedCarpool[0]))
+                {
+                    newCarpool.CarpoolName = splittedCarpool[1];
+                    newCarpool.Start = splittedCarpool[2];
+                    newCarpool.Destination = splittedCarpool[3];
+                    newCarpool.Time = splittedCarpool[4];
+                    newCarpool.Time = splittedCarpool[5];
+                    newCarpool.Seatcount = Convert.ToInt32(splittedCarpool[6]);
+                    newCarpool.ExistenceOfDriver = splittedCarpool[7];
+                    newCarpool.PassengerIds = passengerIds;
+
+                    splittedCarpool[1] = carpoolName;
+                    updatedList.Add($"{splittedCarpool[0]};{splittedCarpool[1]};{splittedCarpool[2]};" +
+                        $"{splittedCarpool[3]};{splittedCarpool[4]};{splittedCarpool[5]};{splittedCarpool[5]};{splittedCarpool[6]};{splittedCarpool[7]};{splittedCarpool[8]}");
+                }
+                else
+                {
+                    updatedList.Add(line);
+                }
+                File.AppendAllLines("C:\\Projects001\\FahrgemeinschaftProject\\Carpool.csv", updatedList);
+            }
+            return newCarpool;
         }
         public void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
         {
@@ -181,6 +217,16 @@ namespace TecAlliance.Carpool.Data.Services
 
                 }
             }
+        }
+        public void DynamicPath()
+        {
+            var originalpath = Assembly.GetExecutingAssembly().Location;
+            string path = Path.GetDirectoryName(originalpath);
+            string[] splittedPath = path.Split('\\');
+            string NewPath = Path.Combine(path, @"..\..\..\..\..\..\");
+            var finalPath = File.Create($"{NewPath}\\Carpool.csv");
+            finalPath.ToString();
+
         }
 
     }

@@ -54,11 +54,15 @@ namespace TecAlliance.Carpool.Api.Controllers
             carpoolBusinessService.ConnectionToLeaveCarpool(carpoolId, userId);
             return StatusCode(200, $"Zu dem Carpool mit der Id: {carpoolId}, wurde der User mit der Id: {userId} erfolgreich entefernt.");
         }
-        [HttpPut("CarpoolName")]
-        public async Task<ActionResult<CarpoolDto>> PutChangeCarpoolName(string carpoolName)
+        [HttpPut("Change CarpoolName")]
+        public async Task<ActionResult<CarpoolDto>> PutChangeCarpoolName(string carpoolName, int carpoolId)
         {
-            carpoolBusinessService.ConnectionToChangeCarpoolName(carpoolName);
-            return StatusCode(200, "Carpoolname wurde erfolgreich geändert.");
+          var result = carpoolBusinessService.ConnectionToChangeCarpoolName(carpoolName,carpoolId);
+            if (result == null)
+            {
+                return StatusCode(200, "Carpoolname wurde nicht geändert.");
+            }
+            return result;
         }
 
 
