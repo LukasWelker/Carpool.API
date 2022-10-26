@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TecAlliance.Carpool.Business.Models;
 
-namespace TecAlliance.Carpool.Buisness.Models
+namespace TecAlliance.Carpool.Business.Models
 {
     public class CarpoolDto
     {
@@ -17,8 +16,8 @@ namespace TecAlliance.Carpool.Buisness.Models
         public string Time { get; set; }
         public int Seatcount { get; set; }
         public string ExistenceOfDriver { get; set; }
-       public List<PassengerInfoDto> PassengerInfoDto { get; set; }
-       
+        public List<PassengerInfoDto> PassengerInfoDto { get; set; }
+
 
         //public string UserName  { get; set; }
 
@@ -37,6 +36,6 @@ namespace TecAlliance.Carpool.Buisness.Models
         {
 
         }
-      
+
     }
 }

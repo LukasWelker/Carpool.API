@@ -5,10 +5,8 @@ using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Data.Services
 {
-    public class CarpoolDataService
+    public class CarpoolDataService :ICarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
-
-
         private int baseId = 0;
         public void CreateNewCarpool(Carpools carpools, int userId)
         {
@@ -37,9 +35,35 @@ namespace TecAlliance.Carpool.Data.Services
                 $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{eachPassengerId}\n";
             File.AppendAllText(DynamicPath(), finalCarpool);
         }
+        #region Get Methods
+        public List<Carpools> DisplayEveryCarpool()
+        {
+            if (File.Exists(DynamicPath()))
+            {
+                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+                List<Carpools> listOfCarpools = new List<Carpools>();
+                foreach (var line in readText)
+                {
+                    string[] splittedCarPoolList = line.Split(';');
+                    var foo = new List<int>();
+                    foo.Add(Convert.ToInt32(splittedCarPoolList[7]));
+                    //hiermit "baue" ich das Objekt 
+                    var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]), splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
+                        splittedCarPoolList[4], Convert.ToInt32(splittedCarPoolList[5]), splittedCarPoolList[6], foo);
+                    //
+                    listOfCarpools.Add(carpool);
+                }
+                return listOfCarpools;
+            }
+            else
+            {
+                throw new Exception("So nicht!");
+            }
+            
+        }
         public Carpools SearchForSpecificCarpoolInCsvAndReadIt(int Id)
         {
-            if(CheckIfCarpoolAndPathExists(Id.ToString(), DynamicPath()))
+            if (CheckIfCarpoolAndPathExists(Id.ToString(), DynamicPath()))
             {
                 var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
                 //create new object of Carpool class to build the object afterwards new
@@ -74,39 +98,11 @@ namespace TecAlliance.Carpool.Data.Services
             {
                 throw new Exception("Diese Datei oder dieses Carpool existiert leider nicht");
             }
-           
+
         }
-        public List<Carpools> DisplayEveryCarpool()
-        {
-            if (File.Exists(DynamicPath()))
-            {
-                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
-                List<Carpools> listOfCarpools = new List<Carpools>();
-                foreach (var line in readText)
-                {
-                    string[] splittedCarPoolList = line.Split(';');
-                    var foo = new List<int>();
-                    foo.Add(Convert.ToInt32(splittedCarPoolList[7]));
-                    //hiermit "baue" ich das Objekt 
-                    var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]), splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
-                        splittedCarPoolList[4], Convert.ToInt32(splittedCarPoolList[5]), splittedCarPoolList[6], foo);
-                    //
-                    listOfCarpools.Add(carpool);
-                }
-                return listOfCarpools;
-            }
-            else
-            {
-                throw new Exception("So nicht!");
-            }
-            
-        }
-        private List<string> ReadCarPoolList(string path)
-        {
-            var CarPoolList = File.ReadAllLines(path, Encoding.UTF8);
-            List<string> readList = CarPoolList.ToList();
-            return readList;
-        }
+        #endregion
+
+        #region Delete Methods
         public void DeleteAllCarpools()
         {
             if (File.Exists(DynamicPath()))
@@ -141,7 +137,36 @@ namespace TecAlliance.Carpool.Data.Services
             //Delete Carpool nach der Pause machen
            
         }
+        public void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
+        {
+            string[] CarPoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+            var id = Convert.ToInt32(carpoolId);
+            //Uwandlung des einzelnen Strings in Array 
+            //string[] singleCarPool = CarPoolList[id].Split(';');
+            string[] singleCarPool;
+            for (int i = 0; i < CarPoolList.Count(); i++)
+            {
+                singleCarPool = CarPoolList[i].Split(';');
+                if (singleCarPool.Length <= 8 && singleCarPool[7].Trim(' ') == string.Empty)
+                {
+                    //Ersetzt den String mit einem leeren String wenn das Array kleiner gleich 8 ist
+                    CarPoolList[id] = string.Empty;
+                    CarPoolList[id].ToList();
+                    List<string> readList = ReadCarPoolList(DynamicPath());
+                    var CarPoolOriginal = readList
+                       .Where(x => x
+                           .Split(';')[0] != carpoolId.ToString())
+                       .ToList();
+                    CarPoolOriginal.Add(CarPoolList[id]);
+                    File.Delete(DynamicPath());
+                    File.AppendAllLines(DynamicPath(), CarPoolOriginal);
 
+                }
+            }
+        }
+        #endregion
+
+        #region Put Methods
         public void AddUserToCarpool(int carpoolId, int userId)
         {
             if(CheckIfCarpoolAndPathExists(carpoolId.ToString(), DynamicPath()))
@@ -203,6 +228,7 @@ namespace TecAlliance.Carpool.Data.Services
             
         }
 
+        //Carpool is nullable because if it does not exists it returns an exception
         public Carpools? ChangeCarpoolName(string carpoolName, int carpoolId)
         {
             if(CheckIfCarpoolNameExists(carpoolName, DynamicPath()))
@@ -249,37 +275,15 @@ namespace TecAlliance.Carpool.Data.Services
             }
             else
             {
-                throw new Exception("So nicht!");
+               return null;
             }
           
         }
-        private void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
-        {
-            string[] CarPoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
-            var id = Convert.ToInt32(carpoolId);
-            //Uwandlung des einzelnen Strings in Array 
-            //string[] singleCarPool = CarPoolList[id].Split(';');
-            string[] singleCarPool;
-            for (int i = 0; i < CarPoolList.Count(); i++)
-            {
-                singleCarPool = CarPoolList[i].Split(';');
-                if (singleCarPool.Length <= 8 && singleCarPool[7].Trim(' ') == string.Empty)
-                {
-                    //Ersetzt den String mit einem leeren String wenn das Array kleiner gleich 8 ist
-                    CarPoolList[id] = string.Empty;
-                    CarPoolList[id].ToList();
-                    List<string> readList = ReadCarPoolList(DynamicPath());
-                    var CarPoolOriginal = readList
-                       .Where(x => x
-                           .Split(';')[0] != carpoolId.ToString())
-                       .ToList();
-                    CarPoolOriginal.Add(CarPoolList[id]);
-                    File.Delete(DynamicPath());
-                    File.AppendAllLines(DynamicPath(), CarPoolOriginal);
+        #endregion
+       
 
-                }
-            }
-        }
+        #region Helper Methods
+       
         private string DynamicPath()
         {
             var originalpath = Assembly.GetExecutingAssembly().Location;
@@ -322,6 +326,12 @@ namespace TecAlliance.Carpool.Data.Services
         {
             throw new Exception("Diese Datei oder die Fahrgemeinschaft exisitiert leider nicht");
         }
-
+        public List<string> ReadCarPoolList(string path)
+        {
+            var CarPoolList = File.ReadAllLines(path, Encoding.UTF8);
+            List<string> readList = CarPoolList.ToList();
+            return readList;
+        }
+        #endregion
     }
 }

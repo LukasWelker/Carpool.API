@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TecAlliance.Carpool.Buisness.Models
+namespace TecAlliance.Carpool.Business.Models
 {
     public class PassengerDto
     {

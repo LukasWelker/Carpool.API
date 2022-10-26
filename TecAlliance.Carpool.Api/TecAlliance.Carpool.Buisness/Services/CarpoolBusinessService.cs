@@ -1,25 +1,24 @@
 ﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using TecAlliance.Carpool.Buisness.Models;
 using TecAlliance.Carpool.Business.Models;
 using TecAlliance.Carpool.Data.Models;
 using TecAlliance.Carpool.Data.Services;
 
-namespace TecAlliance.Carpool.Buisness.Services
+namespace TecAlliance.Carpool.Business.Services
 {
-    public class CarpoolBusinessService
+    public class CarpoolBusinessService :ICarpoolBusinessService
     {
-        private readonly CarpoolDataService carpoolDataService;
+        ICarpoolDataService carpoolDataService;
         // reggex durchläfut eine Liste und checkt ob eine bedinung aus chars erfüllt ist
         public static Regex regex = new Regex("^\\d+$");
         //Variablen Deklaration
-        public PassengerBusinessService driverBusinessService;
-        public CarpoolBusinessService()
+        public IPassengerBusinessService _passengerBusinessService;
+        public CarpoolBusinessService(IPassengerBusinessService passengerBusinessService, ICarpoolDataService carpoolDataService)
         {
             //Hier findet die Initialisierung statt
-            carpoolDataService = new CarpoolDataService();
-            driverBusinessService = new PassengerBusinessService();
+            this.carpoolDataService = carpoolDataService;
+            _passengerBusinessService = passengerBusinessService;
         }
         public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos, int userId)
         {
@@ -80,7 +79,7 @@ namespace TecAlliance.Carpool.Buisness.Services
             //für jede Id in der Liste aus PassengerIds
             foreach (var id in carpools.PassengerIds)
             {
-                var passenger = driverBusinessService.GetSpecificPassenger(id);
+                var passenger = _passengerBusinessService.GetSpecificPassenger(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerDetail(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerInfoDot(id);
                 // baue das Objekt mithilfe der Id, bekomme ich übergeben und dem Namen aus GetSpecificPassenger
