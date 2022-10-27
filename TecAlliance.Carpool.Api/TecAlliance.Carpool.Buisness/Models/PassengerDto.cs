@@ -21,6 +21,7 @@ namespace TecAlliance.Carpool.Business.Models
             LastName = lastName;
             Password = password;
         }
+        //Default constructor
         public PassengerDto()
         {
 

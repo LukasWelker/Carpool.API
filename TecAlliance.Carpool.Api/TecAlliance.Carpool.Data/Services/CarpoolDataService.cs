@@ -13,8 +13,9 @@ namespace TecAlliance.Carpool.Data.Services
             if (File.Exists(DynamicPath()))
             {
                 var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
-                if (readText != null && readText.Length > 0)
+                if (!String.IsNullOrEmpty(readText[0]) && !String.IsNullOrWhiteSpace(readText[0])/*readText != null && readText.Length > 0*/)
                 {
+                    
                     baseId = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
                     carpools.CarpoolId = baseId;
                 }
@@ -46,7 +47,12 @@ namespace TecAlliance.Carpool.Data.Services
                 {
                     string[] splittedCarPoolList = line.Split(';');
                     var foo = new List<int>();
-                    foo.Add(Convert.ToInt32(splittedCarPoolList[7]));
+                     var filteredSplittedCarpoolList = splittedCarPoolList[7].Split(',');
+                    foreach(var entry in filteredSplittedCarpoolList)
+                    {
+                        foo.Add(Convert.ToInt32(entry));
+                    }
+                   
                     //hiermit "baue" ich das Objekt 
                     var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]), splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
                         splittedCarPoolList[4], Convert.ToInt32(splittedCarPoolList[5]), splittedCarPoolList[6], foo);
@@ -139,25 +145,23 @@ namespace TecAlliance.Carpool.Data.Services
         }
         public void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
         {
-            string[] CarPoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+            string[] carpoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
             var id = Convert.ToInt32(carpoolId);
             //Uwandlung des einzelnen Strings in Array 
             //string[] singleCarPool = CarPoolList[id].Split(';');
             string[] singleCarPool;
-            for (int i = 0; i < CarPoolList.Count(); i++)
+            for (int i = 0; i < carpoolList.Count(); i++)
             {
-                singleCarPool = CarPoolList[i].Split(';');
+                singleCarPool = carpoolList[i].Split(';');
                 if (singleCarPool.Length <= 8 && singleCarPool[7].Trim(' ') == string.Empty)
                 {
                     //Ersetzt den String mit einem leeren String wenn das Array kleiner gleich 8 ist
-                    CarPoolList[id] = string.Empty;
-                    CarPoolList[id].ToList();
-                    List<string> readList = ReadCarPoolList(DynamicPath());
-                    var CarPoolOriginal = readList
+                   List<string> updatedList =  carpoolList.ToList();
+                    updatedList.Remove(carpoolList[i]);
+                    var CarPoolOriginal = updatedList
                        .Where(x => x
                            .Split(';')[0] != carpoolId.ToString())
                        .ToList();
-                    CarPoolOriginal.Add(CarPoolList[id]);
                     File.Delete(DynamicPath());
                     File.AppendAllLines(DynamicPath(), CarPoolOriginal);
 
@@ -202,8 +206,9 @@ namespace TecAlliance.Carpool.Data.Services
                     .Where(x => x
                         .Split(';')[0] != carpoolId.ToString())
                     .ToList();
+                var trimmedMatchingCarpool = MatchingCarPool.Trim(' ');
                 //Splitet die passende Zeile in einzelne in strings
-                var splitedMatchingCarPool = MatchingCarPool.Split(';');
+                var splitedMatchingCarPool = trimmedMatchingCarpool.Split(';');
                 //Splitted die gewünschte Zeile intern nach ',' um einen einzelnen Eintrag zu removen und um nur den einen Eintrag in der passenden Zeile zu bearbeiten
                 var SplitSearchedLine = splitedMatchingCarPool[7].Split(',').ToList();
                 //Suche alle Einträge raus, die nicht der UserId entsprechen
@@ -212,7 +217,7 @@ namespace TecAlliance.Carpool.Data.Services
                 var recreateLine = string.Join(",", differntiateListInput);
                 //Schreibt die Zeile neu , wie man sie braucht
                 var wishResultSplitedMatchingCarPool = $"{splitedMatchingCarPool[0]};{splitedMatchingCarPool[1]};{splitedMatchingCarPool[2]};{splitedMatchingCarPool[3]};{splitedMatchingCarPool[4]};{splitedMatchingCarPool[5]};" +
-                    $"{splitedMatchingCarPool[6]}; {recreateLine}";
+                    $"{splitedMatchingCarPool[6]};{recreateLine}";
                 //Fügt alle Zeilen, die man aus der Liste nicht braucht mit der einen veränderten zusammen in eine Liste
                 carPoolOriginal.Add(wishResultSplitedMatchingCarPool);
                 //Löscht die ganze Liste um in Zeile 395 die Liste wie in Zeile 392 zusammengefügt in eine Csv Datei zu schreiben
@@ -316,7 +321,7 @@ namespace TecAlliance.Carpool.Data.Services
             }
             string[] readText = File.ReadAllLines(path, Encoding.UTF8);
             List<string> readList = readText.ToList();
-            // untersucht jede zeile für zeile bis etwas erstes gefunden wurde, das gesplittet also, in diesem Fall der Id entspricht.
+            // untersucht jede zeile für zeile bis etwas erstes gefunden wurde, das gesplittet ajlso, in diesem Fall der Id entspricht.
             var filteredmeml = readText.FirstOrDefault(x => x.Split(';').Skip(1).First() == carpoolName);
             if (filteredmeml != null)
                 return true;

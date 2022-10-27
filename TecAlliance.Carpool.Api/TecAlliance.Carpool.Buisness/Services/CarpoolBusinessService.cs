@@ -20,6 +20,14 @@ namespace TecAlliance.Carpool.Business.Services
             this.carpoolDataService = carpoolDataService;
             _passengerBusinessService = passengerBusinessService;
         }
+        /// <summary>
+        /// Connection between Data and Controller level, needed for the creation of a new Carpool
+        /// </summary>
+        /// <param name="carpoolDtos"></param>
+        /// <param name="userId">uniqe Id to add a User to the newly created carpool </param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos, int userId)
         {
             //basic Errorhandling
@@ -41,6 +49,12 @@ namespace TecAlliance.Carpool.Business.Services
                 return carpool;
             }
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to find a carpools based on its Id
+        /// </summary>
+        /// <param name="Id">uniqe Id to identify a carpool</param>
+        /// <returns></returns>
         public CarpoolDto GetSpecificCarpool(int Id)
         {
             Carpools baa = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
@@ -48,7 +62,10 @@ namespace TecAlliance.Carpool.Business.Services
             return carpooldto;
         }
 
-        //change void to Carpools
+        /// <summary>
+        ///  Connection between Data and Controller level, needed to find all carpools ever created
+        /// </summary>
+        /// <returns> All Carpools ever created</returns>
         public List<CarpoolDto> GetAllCarpools()
         {
 
@@ -63,22 +80,24 @@ namespace TecAlliance.Carpool.Business.Services
             }
             return allCarpools;
         }
-        public Carpools ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
+        private Carpools ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
         {
             //Erstellung eine rneure intListe, wird benötigt für die Befüllung des Carpoolobjekts
             var intListOfIds = new List<int>();
             intListOfIds.Add(carpoolDtos.CarpoolId);
-            var convertedCarpools = new Carpools(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
+            //creating a new Carpools object with the following properties and save the newly created object in a variable from type Carpools
+            Carpools convertedCarpools = new Carpools(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
                 carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, intListOfIds);
             return convertedCarpools;
         }
-        public CarpoolDto ConvertCarpoolToCarpoolDto(Carpools carpools)
+        private CarpoolDto ConvertCarpoolToCarpoolDto(Carpools carpools)
         {
             //Erstellung einer neuen PassengerInfoDtoListeaus objekten
             List<PassengerInfoDto> newPassengerInfoList = new List<PassengerInfoDto>();
             //für jede Id in der Liste aus PassengerIds
             foreach (var id in carpools.PassengerIds)
             {
+                //Line is nedded  to get the Name of the Passenger then we create the new PassengerInfoobject and add each of this objects to a list in order to later build the carpoolDto object we need to return
                 var passenger = _passengerBusinessService.GetSpecificPassenger(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerDetail(id);
                 //var passenger = driverBusinessService.GetSpecificPassengerInfoDot(id);
@@ -91,30 +110,62 @@ namespace TecAlliance.Carpool.Business.Services
             //Liste aus Objekten muss ich hinzufügen diese:  List<PassengerInfo> passengerInfos
             return convertedCarpoolDto;
         }
-
+        /// <summary>
+        /// Creates a new object PassengerDto and returns ist
+        /// </summary>
+        /// <param name="passengerDto"></param>
+        /// <returns> Returns a PassengerDto object</returns>
         public PassengerDto GetPassengerDto(PassengerDto passengerDto)
         {
             PassengerDto passenger = new PassengerDto();
             return passenger;
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to delete all carpools ever created
+        /// </summary>
         public void ConnectionToDeleteAllcarpools()
         {
             carpoolDataService.DeleteAllCarpools();
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to delete one specifoc carpool
+        /// </summary>
+        /// <param name="carpoolId"> uniqe Id to identify the different carpools</param>
         public void ConnectionToDeleteSpecificCarpool(int carpoolId)
         {
             carpoolDataService.DeleteSpecificCarpool(carpoolId);
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to add a Passenger to a Carpools
+        /// </summary>
+        /// <param name="carpoolId">uniqe Id to identify the carpool where the user wants to join</param>
+        /// <param name="userId">uniqe Id to identify and later add the user to the Carpool</param>
         public void ConnectionToAddUserToCarpool(int carpoolId, int userId)
         {
             carpoolDataService.AddUserToCarpool(carpoolId, userId);
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to change the name of a carpool
+        /// </summary>
+        /// <param name="carpoolName"> is equivalent to the new carpool name</param>
+        /// <param name="carpoolId">uniqe Id to identify the carpool </param>
+        /// <returns></returns>
         public CarpoolDto ConnectionToChangeCarpoolName(string carpoolName, int carpoolId)
         {
             Carpools carpool = carpoolDataService.ChangeCarpoolName(carpoolName, carpoolId);
             CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool);
             return carpoolDto;
         }
+
+        /// <summary>
+        /// Connection between Data and Controller level, needed to remove a Passenger to a Carpools
+        /// </summary>
+        /// <param name="carpoolId">uniqe Id to identify the carpool which needs to be adapted</param>
+        /// <param name="userId"> uniqe Id to identify the user who wants to leave</param>
         public void ConnectionToLeaveCarpool(int carpoolId, int userId)
         {
             carpoolDataService.LeaveCarpool(carpoolId, userId);

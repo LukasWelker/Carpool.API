@@ -9,6 +9,12 @@ using TecAlliance.Carpool.Data.Services;
 
 namespace TecAlliance.Carpool.Data.Services
 {
+    /// <summary>
+    /// Creating an Interface to use Dependeny Injection
+    /// Advantages: - enables to work on the business and Data level at the same time
+    ///             - less  dependencies where you do not need them
+    ///             - higher modularity when you change a database       
+    /// </summary>
     public interface IPassengerDataService
     {
         void AddNewPassenger(Passenger driver);

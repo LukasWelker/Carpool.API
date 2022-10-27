@@ -11,8 +11,13 @@ namespace TecAlliance.Carpool.Business.SampleProvider
     //Replaces the example in swagger with the statements inside the following method
     public class PassengerDtoProvider : IExamplesProvider<PassengerDto>
     {
+        /// <summary>
+        /// Replaces the example in swagger with the statements inside the following method
+        /// </summary>
+        /// <returns>Returns an object CarpoolDto with all its properties</returns>
         public PassengerDto GetExamples()
         {
+            
             return new PassengerDto()
             {
                 Id = 1,

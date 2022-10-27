@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TecAlliance.Carpool.Api", "TecAlliance.Carpool.Api\TecAlliance.Carpool.Api.csproj", "{BBF2F19C-8212-4674-B199-84A4E7773540}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.Api", "TecAlliance.Carpool.Api\TecAlliance.Carpool.Api.csproj", "{BBF2F19C-8212-4674-B199-84A4E7773540}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TecAlliance.Carpool.Business", "TecAlliance.Carpool.Buisness\TecAlliance.Carpool.Business.csproj", "{3705259E-8CA7-4316-898A-8B970E2DD822}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.Business", "TecAlliance.Carpool.Buisness\TecAlliance.Carpool.Business.csproj", "{3705259E-8CA7-4316-898A-8B970E2DD822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TecAlliance.Carpool.Data", "TecAlliance.Carpool.Data\TecAlliance.Carpool.Data.csproj", "{7CB1B850-B3E0-489D-9B34-0796E1CA8599}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.Data", "TecAlliance.Carpool.Data\TecAlliance.Carpool.Data.csproj", "{7CB1B850-B3E0-489D-9B34-0796E1CA8599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TecAlliance.Carpool.Data.UnitTests", "TecAlliance.Carpool.UnitTests\TecAlliance.Carpool.UnitTests\TecAlliance.Carpool.Data.UnitTests.csproj", "{D0F9FFF1-A098-425A-8059-A5769204A19B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{7CB1B850-B3E0-489D-9B34-0796E1CA8599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CB1B850-B3E0-489D-9B34-0796E1CA8599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB1B850-B3E0-489D-9B34-0796E1CA8599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0F9FFF1-A098-425A-8059-A5769204A19B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0F9FFF1-A098-425A-8059-A5769204A19B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0F9FFF1-A098-425A-8059-A5769204A19B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0F9FFF1-A098-425A-8059-A5769204A19B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

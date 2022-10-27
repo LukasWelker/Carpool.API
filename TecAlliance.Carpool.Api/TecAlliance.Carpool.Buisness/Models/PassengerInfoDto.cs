@@ -16,6 +16,7 @@ namespace TecAlliance.Carpool.Business.Models
             PassengerId = passengerId;
             PassengerName = passengerName;
         }
+        //Default constructor
         public PassengerInfoDto()
         {
 

@@ -16,6 +16,7 @@ namespace TecAlliance.Carpool.Business.Models
         public string Time { get; set; }
         public int Seatcount { get; set; }
         public string ExistenceOfDriver { get; set; }
+        // Property is a List of PassengerInfoDto Objects
         public List<PassengerInfoDto> PassengerInfoDto { get; set; }
 
 
@@ -32,6 +33,7 @@ namespace TecAlliance.Carpool.Business.Models
             ExistenceOfDriver = existenceOfDriver;
             PassengerInfoDto = passengerInfoDto;
         }
+        //Default constructor is needed if i have to build a new object CarpoolDTo
         public CarpoolDto()
         {
 
