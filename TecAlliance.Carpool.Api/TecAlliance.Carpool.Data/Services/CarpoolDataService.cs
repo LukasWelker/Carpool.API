@@ -8,6 +8,11 @@ namespace TecAlliance.Carpool.Data.Services
     public class CarpoolDataService :ICarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
         private int baseId = 0;
+        public string normalPath { get; set; }
+        public CarpoolDataService()
+        {
+            normalPath = DynamicPath();
+        }
         public void CreateNewCarpool(Carpools carpools, int userId)
         {
             if (File.Exists(DynamicPath()))
@@ -15,17 +20,19 @@ namespace TecAlliance.Carpool.Data.Services
                 var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
                 if (!String.IsNullOrEmpty(readText[0]) && !String.IsNullOrWhiteSpace(readText[0])/*readText != null && readText.Length > 0*/)
                 {
-                    
+
                     baseId = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
                     carpools.CarpoolId = baseId;
                 }
             }
-            //Foreach durch list (passengerid) in Carpool
+            //Alternative:
+
+            //Foreach durch list(passengerid) in Carpool
             // nehme jede id =?> speicher in einen string
-            //wenn liste fertig nimm string oben und schreibe das am enbde in den string {carpools.PassengerIds}\n";
+            //wenn liste fertig nimm string oben und schreibe das am enbde in den string { carpools.PassengerIds}\n";
             StringBuilder finalString = new StringBuilder();
-            string eachPassengerId = $"{userId}";
-            int passengerId2 = userId;
+            string eachPassengerId = $"{carpools.PassengerIds}";
+            int passengerId2 = Convert.ToInt32(eachPassengerId);
             foreach (int passengerId in carpools.PassengerIds)
             {
                 //Wenn der Stringbuilder nicht funktionirt einfach += schreiben
@@ -33,9 +40,13 @@ namespace TecAlliance.Carpool.Data.Services
                 finalString.Append($"{passengerId2},");
             }
             string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
-                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{eachPassengerId}\n";
+                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{finalString}";
             File.AppendAllText(DynamicPath(), finalCarpool);
+            // effektivere Lösung
+
+            //PrintObjectIntoCsv(carpools);
         }
+
         #region Get Methods
         public List<Carpools> DisplayEveryCarpool()
         {
@@ -285,11 +296,22 @@ namespace TecAlliance.Carpool.Data.Services
           
         }
         #endregion
-       
+
 
         #region Helper Methods
-       
-        private string DynamicPath()
+
+        public void PrintObjectIntoCsv(Carpools carpools)
+        {
+            string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
+                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver}";
+            foreach (var passengerId in carpools.PassengerIds)
+            {
+                finalCarpool += $";{passengerId}";
+            }
+            finalCarpool += "\n";
+            File.AppendAllText(DynamicPath(), finalCarpool);
+        }
+        public string DynamicPath()
         {
             var originalpath = Assembly.GetExecutingAssembly().Location;
 

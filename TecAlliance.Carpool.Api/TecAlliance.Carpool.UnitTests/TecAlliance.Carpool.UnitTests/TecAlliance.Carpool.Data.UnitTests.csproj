@@ -15,4 +15,14 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CSV-Files-UnitTests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TecAlliance.Carpool.Api\TecAlliance.Carpool.Api.csproj" />
+    <ProjectReference Include="..\..\TecAlliance.Carpool.Buisness\TecAlliance.Carpool.Business.csproj" />
+    <ProjectReference Include="..\..\TecAlliance.Carpool.Data\TecAlliance.Carpool.Data.csproj" />
+  </ItemGroup>
+
 </Project>

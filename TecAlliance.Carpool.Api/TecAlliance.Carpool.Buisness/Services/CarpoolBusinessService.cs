@@ -99,8 +99,6 @@ namespace TecAlliance.Carpool.Business.Services
             {
                 //Line is nedded  to get the Name of the Passenger then we create the new PassengerInfoobject and add each of this objects to a list in order to later build the carpoolDto object we need to return
                 var passenger = _passengerBusinessService.GetSpecificPassenger(id);
-                //var passenger = driverBusinessService.GetSpecificPassengerDetail(id);
-                //var passenger = driverBusinessService.GetSpecificPassengerInfoDot(id);
                 // baue das Objekt mithilfe der Id, bekomme ich übergeben und dem Namen aus GetSpecificPassenger
                 var passengerDto = new PassengerInfoDto() { PassengerId = passenger.Id, PassengerName = $"{passenger.FirstName} {passenger.LastName}" };
                 newPassengerInfoList.Add(passengerDto);
