@@ -5,54 +5,38 @@ using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Data.Services
 {
+   
     public class CarpoolDataService :ICarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
         private int baseId = 0;
-        public string normalPath { get; set; }
-        public CarpoolDataService()
+        private string? path;
+        public string FilePath
         {
-            normalPath = DynamicPath();
+            get
+            {
+                if (this.path is null)
+                    this.path = this.DynamicPath();
+                return this.path;
+            }
+            set
+            {
+                this.path = value;
+
+            }
         }
         public void CreateNewCarpool(Carpools carpools, int userId)
         {
-            if (File.Exists(DynamicPath()))
-            {
-                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
-                if (!String.IsNullOrEmpty(readText[0]) && !String.IsNullOrWhiteSpace(readText[0])/*readText != null && readText.Length > 0*/)
-                {
-
-                    baseId = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
-                    carpools.CarpoolId = baseId;
-                }
-            }
-            //Alternative:
-
-            //Foreach durch list(passengerid) in Carpool
-            // nehme jede id =?> speicher in einen string
-            //wenn liste fertig nimm string oben und schreibe das am enbde in den string { carpools.PassengerIds}\n";
-            StringBuilder finalString = new StringBuilder();
-            string eachPassengerId = $"{carpools.PassengerIds}";
-            int passengerId2 = Convert.ToInt32(eachPassengerId);
-            foreach (int passengerId in carpools.PassengerIds)
-            {
-                //Wenn der Stringbuilder nicht funktionirt einfach += schreiben
-                eachPassengerId = passengerId2.ToString();
-                finalString.Append($"{passengerId2},");
-            }
-            string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
-                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{finalString}";
-            File.AppendAllText(DynamicPath(), finalCarpool);
-            // effektivere Lösung
-
-            //PrintObjectIntoCsv(carpools);
+            carpools.CarpoolId = GetNextHigherId();
+            PrintObjectIntoCsv(carpools);
         }
+
 
         #region Get Methods
         public List<Carpools> DisplayEveryCarpool()
         {
-            if (File.Exists(DynamicPath()))
+            if (File.Exists(this.FilePath))
             {
-                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+                var readText = File.ReadAllLines(this.FilePath, Encoding.UTF8);
                 List<Carpools> listOfCarpools = new List<Carpools>();
                 foreach (var line in readText)
                 {
@@ -80,15 +64,15 @@ namespace TecAlliance.Carpool.Data.Services
         }
         public Carpools SearchForSpecificCarpoolInCsvAndReadIt(int Id)
         {
-            if (CheckIfCarpoolAndPathExists(Id.ToString(), DynamicPath()))
+            if (CheckIfCarpoolAndPathExists(Id.ToString(), this.FilePath))
             {
-                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+                var readText = File.ReadAllLines(this.FilePath, Encoding.UTF8);
                 //create new object of Carpool class to build the object afterwards new
                 var carpoolToReturn = new Carpools();
                 if (readText != null && readText.Length > 0)
                 {
                     //create new List to go trough the List with Linq
-                    List<string> readList = ReadCarPoolList(DynamicPath());
+                    List<string> readList = ReadCarPoolList(this.FilePath);
                     //search in the List for line which contains the Id
                     var filteredUserCarPools = readList.Where(x => x.Contains(Id.ToString()));
                     // build the object foreach matching line in the List
@@ -122,9 +106,9 @@ namespace TecAlliance.Carpool.Data.Services
         #region Delete Methods
         public void DeleteAllCarpools()
         {
-            if (File.Exists(DynamicPath()))
+            if (File.Exists(this.FilePath))
             {
-                File.Delete(DynamicPath());
+                File.Delete(this.FilePath);
             }
             else
             {
@@ -134,18 +118,18 @@ namespace TecAlliance.Carpool.Data.Services
         }
         public void DeleteSpecificCarpool(int Id)
         {
-            if(CheckIfCarpoolAndPathExists(Id.ToString(), DynamicPath()))
+            if(CheckIfCarpoolAndPathExists(Id.ToString(), this.FilePath))
             {
                 int IdOfCarpool = Id;
-                var readText = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
-                List<string> readList = ReadCarPoolList(DynamicPath());
+                var readText = File.ReadAllLines(this.FilePath, Encoding.UTF8);
+                List<string> readList = ReadCarPoolList(this.FilePath);
                 var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == IdOfCarpool.ToString());
                 List<string> carPool = readList.Where(x => x.Split(';')[0] != IdOfCarpool.ToString()).ToList();
                 carPool.Add(MatchingCarPool);
                 carPool.Remove(MatchingCarPool);
                 var orderdCarpool = carPool.OrderBy(x => x.Split(';')[0]);
-                File.Delete(DynamicPath());
-                File.AppendAllLines(DynamicPath(), orderdCarpool);
+                File.Delete(this.FilePath);
+                File.AppendAllLines(this.FilePath, orderdCarpool);
             }
             else
             {
@@ -156,7 +140,7 @@ namespace TecAlliance.Carpool.Data.Services
         }
         public void InstantDeletionOfCarPoolIfEmpty(int carpoolId)
         {
-            string[] carpoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+            string[] carpoolList = File.ReadAllLines(this.FilePath, Encoding.UTF8);
             var id = Convert.ToInt32(carpoolId);
             //Uwandlung des einzelnen Strings in Array 
             //string[] singleCarPool = CarPoolList[id].Split(';');
@@ -166,15 +150,14 @@ namespace TecAlliance.Carpool.Data.Services
                 singleCarPool = carpoolList[i].Split(';');
                 if (singleCarPool.Length <= 8 && singleCarPool[7].Trim(' ') == string.Empty)
                 {
-                    //Ersetzt den String mit einem leeren String wenn das Array kleiner gleich 8 ist
                    List<string> updatedList =  carpoolList.ToList();
                     updatedList.Remove(carpoolList[i]);
                     var CarPoolOriginal = updatedList
                        .Where(x => x
                            .Split(';')[0] != carpoolId.ToString())
                        .ToList();
-                    File.Delete(DynamicPath());
-                    File.AppendAllLines(DynamicPath(), CarPoolOriginal);
+                    File.Delete(this.FilePath);
+                    File.AppendAllLines(this.FilePath, CarPoolOriginal);
 
                 }
             }
@@ -184,16 +167,16 @@ namespace TecAlliance.Carpool.Data.Services
         #region Put Methods
         public void AddUserToCarpool(int carpoolId, int userId)
         {
-            if(CheckIfCarpoolAndPathExists(carpoolId.ToString(), DynamicPath()))
+            if(CheckIfCarpoolAndPathExists(carpoolId.ToString(), this.FilePath))
             {
-                string[] CarPoolList = File.ReadAllLines(DynamicPath(), Encoding.UTF8);
+                string[] CarPoolList = File.ReadAllLines(this.FilePath, Encoding.UTF8);
                 List<string> readList = CarPoolList.ToList();
                 var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == carpoolId.ToString()) + "," + userId;
                 var CarPool = readList.Where(x => x.Split(';')[0] != carpoolId.ToString()).ToList();
                 CarPool.Add(MatchingCarPool);
                 var orderdCarpool = CarPool;
-                File.Delete(DynamicPath());
-                File.AppendAllLines(DynamicPath(), orderdCarpool);
+                File.Delete(this.FilePath);
+                File.AppendAllLines(this.FilePath, orderdCarpool);
             }
             else
             {
@@ -204,9 +187,9 @@ namespace TecAlliance.Carpool.Data.Services
 
         public void LeaveCarpool(int carpoolId, int userId)
         {
-            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), DynamicPath()))
+            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), this.FilePath))
             {
-                List<string> readList = ReadCarPoolList(DynamicPath());
+                List<string> readList = ReadCarPoolList(this.FilePath);
                 //So kann man was entfernen und hinzufügen in einer CSV Datei
                 //Man sucht in der Csv Datei nach der Zeile mit der passenden Carpool Id
                 var MatchingCarPool = readList
@@ -232,8 +215,8 @@ namespace TecAlliance.Carpool.Data.Services
                 //Fügt alle Zeilen, die man aus der Liste nicht braucht mit der einen veränderten zusammen in eine Liste
                 carPoolOriginal.Add(wishResultSplitedMatchingCarPool);
                 //Löscht die ganze Liste um in Zeile 395 die Liste wie in Zeile 392 zusammengefügt in eine Csv Datei zu schreiben
-                File.Delete(DynamicPath());
-                File.AppendAllLines(DynamicPath(), carPoolOriginal);
+                File.Delete(this.FilePath);
+                File.AppendAllLines(this.FilePath, carPoolOriginal);
                 InstantDeletionOfCarPoolIfEmpty(carpoolId);
             }
             else
@@ -247,12 +230,12 @@ namespace TecAlliance.Carpool.Data.Services
         //Carpool is nullable because if it does not exists it returns an exception
         public Carpools? ChangeCarpoolName(string carpoolName, int carpoolId)
         {
-            if(CheckIfCarpoolNameExists(carpoolName, DynamicPath()))
+            if(CheckIfCarpoolNameExists(carpoolName, this.FilePath))
             {
                 // create new object of Carpoolclass
                 Carpools newCarpool = new Carpools();
                 // Read the CSV-File
-                List<string> readList = ReadCarPoolList(DynamicPath());
+                List<string> readList = ReadCarPoolList(this.FilePath);
                 // create a new List 
                 List<string> updatedList = new List<string>();
                 //loop trough every line in readlist 
@@ -285,7 +268,7 @@ namespace TecAlliance.Carpool.Data.Services
                     {
                         updatedList.Add(line);
                     }
-                    File.AppendAllLines(DynamicPath(), updatedList);
+                    File.AppendAllLines(this.FilePath, updatedList);
                 }
                 return newCarpool;
             }
@@ -300,22 +283,57 @@ namespace TecAlliance.Carpool.Data.Services
 
         #region Helper Methods
 
+        public int GetNextHigherId()
+        {
+            if (File.Exists(this.FilePath))
+            {
+                var readText = File.ReadAllLines(this.FilePath, Encoding.UTF8);
+                if (!String.IsNullOrEmpty(readText[0]) && !String.IsNullOrWhiteSpace(readText[0])/*readText != null && readText.Length > 0*/)
+                {
+                    return baseId = Convert.ToInt32(readText.Last().Split(';').First()) + 1;
+                }
+            }
+            return 0;
+        }
+
         public void PrintObjectIntoCsv(Carpools carpools)
         {
+            //Alternative:
+
+            //Foreach durch list(passengerid) in Carpool
+            // nehme jede id =?> speicher in einen string
+            //wenn liste fertig nimm string oben und schreibe das am enbde in den string { carpools.PassengerIds}\n";
+            //StringBuilder finalString = new StringBuilder();
+            //string eachPassengerId = $"{userId}";
+            //int passengerId2 = Convert.ToInt32(eachPassengerId);
+            //foreach (int passengerId in carpools.PassengerIds)
+            //{
+            //    //Wenn der Stringbuilder nicht funktionirt einfach += schreiben
+            //    eachPassengerId = passengerId2.ToString();
+            //    finalString.Append($"{passengerId2},");
+            //}
+            //string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
+            //    $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};{finalString}";
+            //File.AppendAllText(DynamicPath(), finalCarpool);
+
+
+            // effektivere Lösung
             string finalCarpool = $"{carpools.CarpoolId};{carpools.CarpoolName};{carpools.Start};{carpools.Destination};" +
-                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver}";
+                $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};";
             foreach (var passengerId in carpools.PassengerIds)
             {
-                finalCarpool += $";{passengerId}";
+                finalCarpool += $"{passengerId},";
             }
             finalCarpool += "\n";
-            File.AppendAllText(DynamicPath(), finalCarpool);
+            File.AppendAllText(this.FilePath, finalCarpool);
         }
-        public string DynamicPath()
+       
+
+        private string DynamicPath()
         {
             var originalpath = Assembly.GetExecutingAssembly().Location;
 
-            string path = Path.GetDirectoryName(originalpath);
+            var path = Path.GetDirectoryName(originalpath);
 
             string newPath = Path.Combine(path, @"..\..\..\..\..\","TecAlliance.Carpool.Api\\TecAlliance.Carpool.Data\\CSV-Files\\Carpool.csv");
 
