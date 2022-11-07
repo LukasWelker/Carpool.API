@@ -17,14 +17,34 @@ namespace TecAlliance.Carpool.Data.Services
     /// </summary>
     public interface IPassengerDataService
     {
+        /// <summary>
+        /// Creates a new Passenger
+        /// </summary>
+        /// <param name="driver"></param>
         void AddNewPassenger(Passenger driver);
 
+        /// <summary>
+        /// Display a specific passenger based on its individual ID
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         Passenger SearchForSpecificPassengerInCsvAndReadIt(int Id);
 
+        /// <summary>
+        /// displays every existing Passenger
+        /// </summary>
+        /// <returns></returns>
         List<Passenger> DisplayEveryPassenger();
 
+        /// <summary>
+        /// deletes every existing Passenger
+        /// </summary>
         void DeleteAllPassengers();
 
+        /// <summary>
+        /// deletes a specific Passenger based on the given ID
+        /// </summary>
+        /// <param name="Id"></param>
         void DeleteSpecificPassenegrById(int Id);
     }
 }

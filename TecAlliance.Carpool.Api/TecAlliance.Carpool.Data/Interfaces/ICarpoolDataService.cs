@@ -15,24 +15,63 @@ namespace TecAlliance.Carpool.Data.Services
     {
 
         //dependency-injection
-
+        /// <summary>
+        /// method that writes the to be created dataset in the existing CSV-File
+        /// </summary>
+        /// <param name="carpools"></param>
+        /// <param name="userId"></param>
         void CreateNewCarpool(Carpools carpools, int userId);
 
-
+        /// <summary>
+        /// displays every existing carpool
+        /// </summary>
+        /// <returns></returns>
         List<Carpools> DisplayEveryCarpool();
 
+        /// <summary>
+        /// displays a specific Carpool based on the given ID
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         Carpools SearchForSpecificCarpoolInCsvAndReadIt(int Id);
 
+        /// <summary>
+        /// deletes every existing Carpool
+        /// </summary>
         void DeleteAllCarpools();
 
+        /// <summary>
+        /// deletes a specific Carpool based on the given ID
+        /// </summary>
+        /// <param name="Id"></param>
         void DeleteSpecificCarpool(int Id);
 
+        /// <summary>
+        /// Instantdeletion of a Carpool if the last existing member left the specific Carpool
+        /// </summary>
+        /// <param name="carpoolId"></param>
         void InstantDeletionOfCarPoolIfEmpty(int carpoolId);
 
+        /// <summary>
+        /// Adds a User based on its specific passenger, to a specific Carpool based on its specific ID
+        /// </summary>
+        /// <param name="carpoolId"></param>
+        /// <param name="userId"></param>
         void AddUserToCarpool(int carpoolId, int userId);
 
+        /// <summary>
+        /// Removes a User based on its specific passenger, from a specific Carpool based on its specific ID
+        /// </summary>
+        /// <param name="carpoolId"></param>
+        /// <param name="userId"></param>
         void LeaveCarpool(int carpoolId, int userId);
 
+        /// <summary>
+        /// Changes the Carpoolname of a specific Carpool based on its individual ID
+        /// </summary>
+        /// <param name="carpoolName"></param>
+        /// <param name="carpoolId"></param>
+        /// <returns></returns>
         Carpools? ChangeCarpoolName(string carpoolName, int carpoolId);
       
     

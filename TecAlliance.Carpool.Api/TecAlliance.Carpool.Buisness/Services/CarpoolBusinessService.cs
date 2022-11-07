@@ -80,6 +80,7 @@ namespace TecAlliance.Carpool.Business.Services
             }
             return allCarpools;
         }
+
         private Carpools ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
         {
             //Erstellung eine rneure intListe, wird benötigt für die Befüllung des Carpoolobjekts
@@ -90,6 +91,7 @@ namespace TecAlliance.Carpool.Business.Services
                 carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, intListOfIds);
             return convertedCarpools;
         }
+
         private CarpoolDto ConvertCarpoolToCarpoolDto(Carpools carpools)
         {
             //Erstellung einer neuen PassengerInfoDtoListeaus objekten
@@ -109,7 +111,7 @@ namespace TecAlliance.Carpool.Business.Services
             return convertedCarpoolDto;
         }
         /// <summary>
-        /// Creates a new object PassengerDto and returns ist
+        /// Creates a new object PassengerDto and returns it
         /// </summary>
         /// <param name="passengerDto"></param>
         /// <returns> Returns a PassengerDto object</returns>
@@ -128,7 +130,7 @@ namespace TecAlliance.Carpool.Business.Services
         }
 
         /// <summary>
-        /// Connection between Data and Controller level, needed to delete one specifoc carpool
+        /// Connection between Data and Controller level, needed to delete one specific carpool
         /// </summary>
         /// <param name="carpoolId"> uniqe Id to identify the different carpools</param>
         public void ConnectionToDeleteSpecificCarpool(int carpoolId)

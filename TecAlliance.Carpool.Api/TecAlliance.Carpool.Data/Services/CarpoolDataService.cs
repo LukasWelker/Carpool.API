@@ -21,7 +21,6 @@ namespace TecAlliance.Carpool.Data.Services
             set
             {
                 this.path = value;
-
             }
         }
         public void CreateNewCarpool(Carpools carpools, int userId)
@@ -47,7 +46,6 @@ namespace TecAlliance.Carpool.Data.Services
                     {
                         foo.Add(Convert.ToInt32(entry));
                     }
-                   
                     //hiermit "baue" ich das Objekt 
                     var carpool = new Carpools(Convert.ToInt32(splittedCarPoolList[0]), splittedCarPoolList[1], splittedCarPoolList[2], splittedCarPoolList[3],
                         splittedCarPoolList[4], Convert.ToInt32(splittedCarPoolList[5]), splittedCarPoolList[6], foo);
@@ -158,7 +156,6 @@ namespace TecAlliance.Carpool.Data.Services
                        .ToList();
                     File.Delete(this.FilePath);
                     File.AppendAllLines(this.FilePath, CarPoolOriginal);
-
                 }
             }
         }
@@ -182,7 +179,6 @@ namespace TecAlliance.Carpool.Data.Services
             {
                 ExecptionThatFileOrCarpoolDoesNotExist();
             }
-            
         }
 
         public void LeaveCarpool(int carpoolId, int userId)
@@ -221,10 +217,8 @@ namespace TecAlliance.Carpool.Data.Services
             }
             else
             {
-                
                 ExecptionThatFileOrCarpoolDoesNotExist();
             }
-            
         }
 
         //Carpool is nullable because if it does not exists it returns an exception

@@ -54,9 +54,8 @@ namespace TecAlliance.Carpool.Data.Services
             }
             else
             {
-                throw new Exception("Diese Datei ecistiert leider nicht");
+                throw new Exception("Diese Datei existiert leider nicht");
             }
-           
         }
 
         public List<Passenger> DisplayEveryPassenger()
