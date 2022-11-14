@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using TecAlliance.Carpool.Business.Interfaces;
 using TecAlliance.Carpool.Business.Models;
+using TecAlliance.Carpool.Data.Interfaces;
 using TecAlliance.Carpool.Data.Models;
-using TecAlliance.Carpool.Data.Services;
 
 namespace TecAlliance.Carpool.Business.Services
 {

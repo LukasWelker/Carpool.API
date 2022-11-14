@@ -12,9 +12,8 @@ namespace TecAlliance.Carpool.Business.Services
 {
     public class PassengerBusinessService :IPassengerBusinessService
     {
+
         IPassengerDataService driverDataService;
-        private int count = 0;
-       
         public static Regex nameRegex = new Regex("[A-Za-zÀ-ȕ0-9]");
         public PassengerBusinessService(IPassengerDataService driverDataService)
         {
