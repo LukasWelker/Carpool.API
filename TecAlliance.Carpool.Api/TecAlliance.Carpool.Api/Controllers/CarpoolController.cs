@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TecAlliance.Carpool.Business.Interfaces;
 using TecAlliance.Carpool.Business.Models;
-using TecAlliance.Carpool.Business.Services;
 using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Api.Controllers

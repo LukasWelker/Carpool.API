@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using TecAlliance.Carpool.Data.Models;
 
-namespace TecAlliance.Carpool.Data.Services
+namespace TecAlliance.Carpool.Data.Interfaces
 {
     /// <summary>
     /// Creating an Interface to use Dependeny Injection
@@ -73,7 +73,7 @@ namespace TecAlliance.Carpool.Data.Services
         /// <param name="carpoolId"></param>
         /// <returns></returns>
         Carpools? ChangeCarpoolName(string carpoolName, int carpoolId);
-      
-    
+
+
     }
 }

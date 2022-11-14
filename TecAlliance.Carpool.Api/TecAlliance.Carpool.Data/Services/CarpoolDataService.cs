@@ -1,16 +1,17 @@
 ﻿using System.Data;
 using System.Reflection;
 using System.Text;
+using TecAlliance.Carpool.Data.Interfaces;
 using TecAlliance.Carpool.Data.Models;
 
 namespace TecAlliance.Carpool.Data.Services
 {
-   
+
     public class CarpoolDataService :ICarpoolDataService
     {/*      private string carpoolPath = TecAlliance.Carpool.Data.Properties.Resources.CarpoolCsvPath;*/
         private int baseId = 0;
         private string? path;
-        public string FilePath
+        public string FilePath //TODO Andre fragen was das ist
         {
             get
             {
@@ -71,14 +72,20 @@ namespace TecAlliance.Carpool.Data.Services
                 {
                     //create new List to go trough the List with Linq
                     List<string> readList = ReadCarPoolList(this.FilePath);
-                    //search in the List for line which contains the Id
-                    var filteredUserCarPools = readList.Where(x => x.Contains(Id.ToString()));
+                    
+                    var filteredUserCarPools= readList.Where(x => x.StartsWith(Id.ToString())).ToList();
+
                     // build the object foreach matching line in the List
                     foreach (var carpool in filteredUserCarPools)
                     {
                         //splitting carpool in each "part" in given example Id, Name, Time etc
                         var splittedCarpool = carpool.Split(';');
                         var foo = new List<int>();
+                        var bar = splittedCarpool[7].Split(',');
+                        foreach(string i in bar)
+                        {
+                            foo.Add(Convert.ToInt32(i));
+                        }
                         //building the new Carpool object
                         carpoolToReturn.CarpoolId = Convert.ToInt32(splittedCarpool[0]);
                         carpoolToReturn.CarpoolName = splittedCarpool[1];
@@ -88,7 +95,6 @@ namespace TecAlliance.Carpool.Data.Services
                         carpoolToReturn.Seatcount = Convert.ToInt32(splittedCarpool[5]);
                         carpoolToReturn.ExistenceOfDriver = splittedCarpool[6];
                         carpoolToReturn.PassengerIds = foo;
-                        foo.Add(Convert.ToInt32(splittedCarpool[7]));
                     }
                 }
                 return carpoolToReturn;
@@ -241,7 +247,7 @@ namespace TecAlliance.Carpool.Data.Services
                     var passengerIds = new List<int>();
                     foreach (var splittedPassengerId in splittedPassengerIds)
                     {
-                        passengerIds.Add(int.Parse(splittedPassengerId));
+                        passengerIds.Add(Convert.ToInt32(splittedPassengerId));
                     }
                     if (carpoolId == Convert.ToInt32(splittedCarpool[0]))
                     {
@@ -316,8 +322,9 @@ namespace TecAlliance.Carpool.Data.Services
                 $"{carpools.Time};{carpools.Seatcount};{carpools.ExistenceOfDriver};";
             foreach (var passengerId in carpools.PassengerIds)
             {
-                finalCarpool += $"{passengerId},";
+                finalCarpool += $"{passengerId}," ;
             }
+            finalCarpool = finalCarpool.Trim(',');
             finalCarpool += "\n";
             File.AppendAllText(this.FilePath, finalCarpool);
         }

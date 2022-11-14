@@ -6,7 +6,7 @@ using TecAlliance.Carpool.Data.Models;
 using TecAlliance.Carpool.Data.Services;
 
 
-namespace TecAlliance.Carpool.Business.Services
+namespace TecAlliance.Carpool.Business.Interfaces
 {
     public interface IPassengerBusinessService
     {
@@ -40,6 +40,6 @@ namespace TecAlliance.Carpool.Business.Services
         /// </summary>
         /// <param name="passengerId"></param>
         void ConnectionToDeleteSpecificPassenger(int passengerId);
-      
+
     }
 }
