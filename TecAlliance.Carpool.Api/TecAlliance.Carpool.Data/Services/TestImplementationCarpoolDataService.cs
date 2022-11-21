@@ -223,6 +223,31 @@ namespace TecAlliance.Carpool.Data.Services
 
         #region Helper Methods
 
+        public List<int> GetPassengerIds()
+        {
+            List<int> passengerIds = new List<int>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                //SQL-Injection 
+                string queryString = $"SELECT * FROM Users";
+                SqlCommand command = new SqlCommand(queryString, connection);
+                //SQL-Injection End
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        passengerIds.Add(Convert.ToInt32(reader["UserId"]));
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return passengerIds;
+        }
         public int GetNextHigherId()
         {
             if (File.Exists(this.FilePath))
