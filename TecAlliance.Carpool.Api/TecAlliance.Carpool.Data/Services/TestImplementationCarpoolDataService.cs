@@ -155,117 +155,67 @@ namespace TecAlliance.Carpool.Data.Services
         {
             using(SqlConnection connection = new SqlConnection(connectionString))
             {
-                string queryString = $"INSERT INTO CarpoolUsers (CarpoolId, UserId) VALUES ({carpoolId},{userId})";
+                string queryString = $"INSERT INTO CarpoolUsers (CarpoolId, UserId) VALUES (@carpoolId, @userId)";
                 SqlCommand command = new SqlCommand(queryString, connection);
+                command.Parameters.Add("@carpoolId", System.Data.SqlDbType.Int);
+                command.Parameters["@carpoolId"].Value = carpoolId;
+                command.Parameters.Add("@userId", System.Data.SqlDbType.Int);
+                command.Parameters["@userId"].Value = userId;
                 connection.Open();
                 command.ExecuteNonQuery();
-            }
-            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), this.FilePath))
-            {
-                string[] CarPoolList = File.ReadAllLines(this.FilePath, Encoding.UTF8);
-                List<string> readList = CarPoolList.ToList();
-                var MatchingCarPool = readList.FirstOrDefault(x => x.Split(';')[0] == carpoolId.ToString()) + "," + userId;
-                var CarPool = readList.Where(x => x.Split(';')[0] != carpoolId.ToString()).ToList();
-                CarPool.Add(MatchingCarPool);
-                var orderdCarpool = CarPool;
-                File.Delete(this.FilePath);
-                File.AppendAllLines(this.FilePath, orderdCarpool);
-            }
-            else
-            {
-                ExecptionThatFileOrCarpoolDoesNotExist();
             }
         }
 
         public void LeaveCarpool(int carpoolId, int userId)
         {
-            if (CheckIfCarpoolAndPathExists(carpoolId.ToString(), this.FilePath))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                List<string> readList = ReadCarPoolList(this.FilePath);
-                //So kann man was entfernen und hinzufügen in einer CSV Datei
-                //Man sucht in der Csv Datei nach der Zeile mit der passenden Carpool Id
-                var MatchingCarPool = readList
-                    .FirstOrDefault(x => x
-                        .Split(';')[0] == carpoolId.ToString());
-                //Sucht/Liest alle anderen Zeilen, die nicht gesucht sind
-                var carPoolOriginal = readList
-                    .Where(x => x
-                        .Split(';')[0] != carpoolId.ToString())
-                    .ToList();
-                var trimmedMatchingCarpool = MatchingCarPool.Trim(' ');
-                //Splitet die passende Zeile in einzelne in strings
-                var splitedMatchingCarPool = trimmedMatchingCarpool.Split(';');
-                //Splitted die gewünschte Zeile intern nach ',' um einen einzelnen Eintrag zu removen und um nur den einen Eintrag in der passenden Zeile zu bearbeiten
-                var SplitSearchedLine = splitedMatchingCarPool[7].Split(',').ToList();
-                //Suche alle Einträge raus, die nicht der UserId entsprechen
-                var differntiateListInput = SplitSearchedLine.Where(x => !x.Equals(userId.ToString()));
-                //Ersellt einen String (mit der JoinMethod) ohne die UserId, da  DifferntiateListInput alle Ids außer die userid beinhaltet
-                var recreateLine = string.Join(",", differntiateListInput);
-                //Schreibt die Zeile neu , wie man sie braucht
-                var wishResultSplitedMatchingCarPool = $"{splitedMatchingCarPool[0]};{splitedMatchingCarPool[1]};{splitedMatchingCarPool[2]};{splitedMatchingCarPool[3]};{splitedMatchingCarPool[4]};{splitedMatchingCarPool[5]};" +
-                    $"{splitedMatchingCarPool[6]};{recreateLine}";
-                //Fügt alle Zeilen, die man aus der Liste nicht braucht mit der einen veränderten zusammen in eine Liste
-                carPoolOriginal.Add(wishResultSplitedMatchingCarPool);
-                //Löscht die ganze Liste um in Zeile 395 die Liste wie in Zeile 392 zusammengefügt in eine Csv Datei zu schreiben
-                File.Delete(this.FilePath);
-                File.AppendAllLines(this.FilePath, carPoolOriginal);
-                InstantDeletionOfCarPoolIfEmpty(carpoolId);
-            }
-            else
-            {
-                ExecptionThatFileOrCarpoolDoesNotExist();
+                string queryString = $"DELETE FROM CarpoolUsers WHERE CarpoolUsers.CarpoolId = @carpoolId AND CarpoolUsers.UserId = @UserId";
+                SqlCommand command = new SqlCommand(queryString, connection);
+                command.Parameters.Add("@carpoolId", System.Data.SqlDbType.Int);
+                command.Parameters["@carpoolId"].Value = carpoolId;
+                command.Parameters.Add("@UserId", System.Data.SqlDbType.Int);
+                command.Parameters["@UserId"].Value = userId;
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
 
         //Carpool is nullable because if it does not exists it returns an exception
         public CarpoolEntity? ChangeCarpoolName(string carpoolName, int carpoolId)
         {
-            if (CheckIfCarpoolNameExists(carpoolName, this.FilePath))
-            {
+           
                 // create new object of Carpoolclass
                 CarpoolEntity newCarpool = new CarpoolEntity();
-                // Read the CSV-File
-                List<string> readList = ReadCarPoolList(this.FilePath);
-                // create a new List 
-                List<string> updatedList = new List<string>();
-                //loop trough every line in readlist 
-                foreach (string line in readList)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    //splits each part 
-                    var splittedCarpool = line.Split(';');
-                    var splittedPassengerIds = splittedCarpool[8].Split(',');
-                    var passengerIds = new List<int>();
-                    foreach (var splittedPassengerId in splittedPassengerIds)
+                //SQL-Injection 
+                string queryString = $" UPDATE Carpool SET CarpoolName = '{carpoolName}' WHERE CarpoolId = @carpoolId";
+                    SqlCommand command = new SqlCommand(queryString, connection);
+                    command.Parameters.Add("@carpoolId", System.Data.SqlDbType.Int);
+                    command.Parameters["@carpoolId"].Value = carpoolId;
+                    //SQL-Injection End
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    try
                     {
-                        passengerIds.Add(Convert.ToInt32(splittedPassengerId));
+                        while (reader.Read())
+                        {
+                            newCarpool.CarpoolId = Convert.ToInt32(reader["CarpoolId"]);
+                            newCarpool.CarpoolName = reader["CarpoolName"].ToString();
+                            newCarpool.Start = reader["Startlocation"].ToString();
+                            newCarpool.Destination = reader["Destination"].ToString();
+                            newCarpool.Seatcount = Convert.ToInt32(reader["Seatcount"]);
+                        }
                     }
-                    if (carpoolId == Convert.ToInt32(splittedCarpool[0]))
+                    finally
                     {
-                        newCarpool.CarpoolName = splittedCarpool[1];
-                        newCarpool.Start = splittedCarpool[2];
-                        newCarpool.Destination = splittedCarpool[3];
-                        newCarpool.Time = splittedCarpool[4];
-                        newCarpool.Time = splittedCarpool[5];
-                        newCarpool.Seatcount = Convert.ToInt32(splittedCarpool[6]);
-                        newCarpool.ExistenceOfDriver = splittedCarpool[7];
-                        newCarpool.PassengerIds = passengerIds;
-
-                        splittedCarpool[1] = carpoolName;
-                        updatedList.Add($"{splittedCarpool[0]};{splittedCarpool[1]};{splittedCarpool[2]};" +
-                            $"{splittedCarpool[3]};{splittedCarpool[4]};{splittedCarpool[5]};{splittedCarpool[5]};{splittedCarpool[6]};{splittedCarpool[7]};{splittedCarpool[8]}");
+                        reader.Close();
                     }
-                    else
-                    {
-                        updatedList.Add(line);
-                    }
-                    File.AppendAllLines(this.FilePath, updatedList);
                 }
                 return newCarpool;
-            }
-            else
-            {
-                return null;
-            }
+              
+           
 
         }
         #endregion

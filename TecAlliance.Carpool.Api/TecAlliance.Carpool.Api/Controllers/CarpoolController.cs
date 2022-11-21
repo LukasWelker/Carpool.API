@@ -116,7 +116,7 @@ namespace TecAlliance.Carpool.Api.Controllers
         public  async Task<ActionResult<CarpoolDto>> PutByIdLeave(int carpoolId, int userId)
         {
             carpoolBusinessService.ConnectionToLeaveCarpool(carpoolId, userId);
-            return StatusCode(200, $"Zu dem Carpool mit der Id: {carpoolId}, wurde der User mit der Id: {userId} erfolgreich entefernt.");
+            return StatusCode(200, $"Zu dem Carpool mit der Id: {carpoolId}, wurde der User mit der Id: {userId} erfolgreich entfernt.");
         }
         /// <summary>
         /// Function to change the Carpoolname

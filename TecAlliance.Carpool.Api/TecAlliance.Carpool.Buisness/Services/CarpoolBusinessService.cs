@@ -58,8 +58,8 @@ namespace TecAlliance.Carpool.Business.Services
         /// <returns></returns>
         public CarpoolDto GetSpecificCarpool(int Id)
         {
-            CarpoolEntity baa = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
-            CarpoolDto carpooldto = ConvertCarpoolToCarpoolDto(baa);
+            CarpoolEntity carpool = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
+            CarpoolDto carpooldto = ConvertCarpoolToCarpoolDto(carpool);
             return carpooldto;
         }
 
@@ -69,13 +69,12 @@ namespace TecAlliance.Carpool.Business.Services
         /// <returns> All Carpools ever created</returns>
         public List<CarpoolDto> GetAllCarpools()
         {
-
-
             List<CarpoolEntity> everyCarpool = carpoolDataService.DisplayEveryCarpool();
             //Ich initialisiere eine Liste aus Dto-Objekten 
             List<CarpoolDto> allCarpools = new List<CarpoolDto>();
             foreach (CarpoolEntity carpool in everyCarpool)
             {
+
                 CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool);
                 allCarpools.Add(carpoolDto);
             }
@@ -93,11 +92,11 @@ namespace TecAlliance.Carpool.Business.Services
             return convertedCarpools;
         }
 
-        //TODO fragen!
 
 
         private CarpoolDto ConvertCarpoolToCarpoolDto(CarpoolEntity carpools)
         {
+            //TODO-
             //Erstellung einer neuen PassengerInfoDtoListeaus objekten
             List<PassengerInfoDto> newPassengerInfoList = new List<PassengerInfoDto>();
             //für jede Id in der Liste aus PassengerIds
