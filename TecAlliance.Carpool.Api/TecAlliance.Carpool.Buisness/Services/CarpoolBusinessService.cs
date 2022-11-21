@@ -44,7 +44,7 @@ namespace TecAlliance.Carpool.Business.Services
             }
             else
             {
-                Carpools carpools = ConvertCarpoolDtosToCarpools(carpoolDtos);
+                CarpoolEntity carpools = ConvertCarpoolDtosToCarpools(carpoolDtos);
                 carpoolDataService.CreateNewCarpool(carpools, userId);
                 CarpoolDto carpool = ConvertCarpoolToCarpoolDto(carpools);
                 return carpool;
@@ -58,7 +58,7 @@ namespace TecAlliance.Carpool.Business.Services
         /// <returns></returns>
         public CarpoolDto GetSpecificCarpool(int Id)
         {
-            Carpools baa = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
+            CarpoolEntity baa = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
             CarpoolDto carpooldto = ConvertCarpoolToCarpoolDto(baa);
             return carpooldto;
         }
@@ -71,10 +71,10 @@ namespace TecAlliance.Carpool.Business.Services
         {
 
 
-            List<Carpools> everyCarpool = carpoolDataService.DisplayEveryCarpool();
+            List<CarpoolEntity> everyCarpool = carpoolDataService.DisplayEveryCarpool();
             //Ich initialisiere eine Liste aus Dto-Objekten 
             List<CarpoolDto> allCarpools = new List<CarpoolDto>();
-            foreach (Carpools carpool in everyCarpool)
+            foreach (CarpoolEntity carpool in everyCarpool)
             {
                 CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool);
                 allCarpools.Add(carpoolDto);
@@ -82,13 +82,13 @@ namespace TecAlliance.Carpool.Business.Services
             return allCarpools;
         }
 
-        private Carpools ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
+        private CarpoolEntity ConvertCarpoolDtosToCarpools(CarpoolDto carpoolDtos)
         {
             //Erstellung eine rneure intListe, wird benötigt für die Befüllung des Carpoolobjekts
             var intListOfIds = new List<int>();
             intListOfIds.Add(carpoolDtos.CarpoolId);
             //creating a new Carpools object with the following properties and save the newly created object in a variable from type Carpools
-            Carpools convertedCarpools = new Carpools(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
+            CarpoolEntity convertedCarpools = new CarpoolEntity(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
                 carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, intListOfIds);
             return convertedCarpools;
         }
@@ -96,15 +96,15 @@ namespace TecAlliance.Carpool.Business.Services
         //TODO fragen!
 
 
-        private CarpoolDto ConvertCarpoolToCarpoolDto(Carpools carpools)
+        private CarpoolDto ConvertCarpoolToCarpoolDto(CarpoolEntity carpools)
         {
             //Erstellung einer neuen PassengerInfoDtoListeaus objekten
             List<PassengerInfoDto> newPassengerInfoList = new List<PassengerInfoDto>();
             //für jede Id in der Liste aus PassengerIds
-            foreach (var id in carpools.PassengerIds)
+            foreach (var carpoolId in carpools.PassengerIds)
             {
                 //Line is nedded  to get the Name of the Passenger then we create the new PassengerInfoobject and add each of this objects to a list in order to later build the carpoolDto object we need to return
-                var passenger = _passengerBusinessService.GetSpecificPassenger(id);
+                var passenger = _passengerBusinessService.GetSpecificPassenger(carpoolId);
                 // baue das Objekt mithilfe der Id, bekomme ich übergeben und dem Namen aus GetSpecificPassenger
                 var passengerDto = new PassengerInfoDto() { PassengerId = passenger.Id, PassengerName = $"{passenger.FirstName} {passenger.LastName}" };
                 newPassengerInfoList.Add(passengerDto);
@@ -160,7 +160,7 @@ namespace TecAlliance.Carpool.Business.Services
         /// <returns></returns>
         public CarpoolDto ConnectionToChangeCarpoolName(string carpoolName, int carpoolId)
         {
-            Carpools carpool = carpoolDataService.ChangeCarpoolName(carpoolName, carpoolId);
+            CarpoolEntity carpool = carpoolDataService.ChangeCarpoolName(carpoolName, carpoolId);
             CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool);
             return carpoolDto;
         }

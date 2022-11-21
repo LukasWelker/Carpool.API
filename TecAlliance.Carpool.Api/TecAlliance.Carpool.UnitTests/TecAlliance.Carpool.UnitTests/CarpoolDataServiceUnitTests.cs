@@ -9,7 +9,7 @@ namespace TecAlliance.Carpool.Data.UnitTests
     public class CarpoolDataServiceUnitTests
     {
 
-        public CarpoolDataService PrepareCarpoolDataServicesTestObject(List<Carpools> carpoolsList)
+        public CarpoolDataService PrepareCarpoolDataServicesTestObject(List<CarpoolEntity> carpoolsList)
         {
             var carpoolDataServices = new CarpoolDataService();
             var originalPath = Assembly.GetExecutingAssembly().Location;
@@ -24,12 +24,12 @@ namespace TecAlliance.Carpool.Data.UnitTests
             }
             return carpoolDataServices;
         }
-        private List<Carpools> PrepareCarpoolsList()
+        private List<CarpoolEntity> PrepareCarpoolsList()
         {
             var passengers = new List<int>() { 1, 2 };
-            var carpool1 = new Carpools(0, "LastWish", "Moon", "Earth", "09:00", 5, "yes", passengers);
-            var carpool2 = new Carpools(1, "Finalstand", "Jupiter", "Pluto", "18:00", 5, "no", passengers);
-            var carpoolsList = new List<Carpools>() { carpool1, carpool2 };
+            var carpool1 = new CarpoolEntity(0, "LastWish", "Moon", "Earth", "09:00", 5, "yes", passengers);
+            var carpool2 = new CarpoolEntity(1, "Finalstand", "Jupiter", "Pluto", "18:00", 5, "no", passengers);
+            var carpoolsList = new List<CarpoolEntity>() { carpool1, carpool2 };
             return carpoolsList;
         }
         [TestMethod]
@@ -53,8 +53,8 @@ namespace TecAlliance.Carpool.Data.UnitTests
             var carpoolaDataServices = PrepareCarpoolDataServicesTestObject(PrepareCarpoolsList());
             var passengers = new List<int>() { 1, 2 };
 
-            var expected = new Carpools(1, "Finalstand", "Jupiter", "Pluto", "18:00", 5, "no", passengers);
-            var carpool1 = new Carpools(0, "LastWish", "Moon", "Earth", "09:00", 5, "yes", passengers);
+            var expected = new CarpoolEntity(1, "Finalstand", "Jupiter", "Pluto", "18:00", 5, "no", passengers);
+            var carpool1 = new CarpoolEntity(0, "LastWish", "Moon", "Earth", "09:00", 5, "yes", passengers);
             //Act
             var actual = carpoolaDataServices.SearchForSpecificCarpoolInCsvAndReadIt(0);
 

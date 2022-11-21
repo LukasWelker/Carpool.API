@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.Data", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.Data.UnitTests", "TecAlliance.Carpool.UnitTests\TecAlliance.Carpool.UnitTests\TecAlliance.Carpool.Data.UnitTests.csproj", "{D0F9FFF1-A098-425A-8059-A5769204A19B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TecAlliance.Carpool.BusinessTests", "TecAlliance.Carpool.BusinessTests\TecAlliance.Carpool.BusinessTests.csproj", "{1BEDBB16-8440-477D-ACC8-7A0969C72E5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TecAlliance.Carpool.BusinessTests", "TecAlliance.Carpool.BusinessTests\TecAlliance.Carpool.BusinessTests.csproj", "{1BEDBB16-8440-477D-ACC8-7A0969C72E5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

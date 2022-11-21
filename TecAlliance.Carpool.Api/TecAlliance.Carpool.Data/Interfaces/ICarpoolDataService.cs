@@ -20,20 +20,20 @@ namespace TecAlliance.Carpool.Data.Interfaces
         /// </summary>
         /// <param name="carpools"></param>
         /// <param name="userId"></param>
-        void CreateNewCarpool(Carpools carpools, int userId);
+        void CreateNewCarpool(CarpoolEntity carpools, int userId);
 
         /// <summary>
         /// displays every existing carpool
         /// </summary>
         /// <returns></returns>
-        List<Carpools> DisplayEveryCarpool();
+        List<CarpoolEntity> DisplayEveryCarpool();
 
         /// <summary>
         /// displays a specific Carpool based on the given ID
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        Carpools SearchForSpecificCarpoolInCsvAndReadIt(int Id);
+        CarpoolEntity SearchForSpecificCarpoolInCsvAndReadIt(int Id);
 
         /// <summary>
         /// deletes every existing Carpool
@@ -72,7 +72,7 @@ namespace TecAlliance.Carpool.Data.Interfaces
         /// <param name="carpoolName"></param>
         /// <param name="carpoolId"></param>
         /// <returns></returns>
-        Carpools? ChangeCarpoolName(string carpoolName, int carpoolId);
+        CarpoolEntity? ChangeCarpoolName(string carpoolName, int carpoolId);
 
 
     }

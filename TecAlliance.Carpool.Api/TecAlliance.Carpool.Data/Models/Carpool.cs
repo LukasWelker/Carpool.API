@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TecAlliance.Carpool.Data.Models
 {
-    public class Carpools
+    public class CarpoolEntity
     {
 
         public int CarpoolId { get; set; }
@@ -19,7 +19,7 @@ namespace TecAlliance.Carpool.Data.Models
         public List<int> PassengerIds{ get; set; }
 
         //Ovverride standard constructor
-        public Carpools(int carpoolId, string carpoolName, string start, string destination, string time, int seatcount,
+        public CarpoolEntity(int carpoolId, string carpoolName, string start, string destination, string time, int seatcount,
             string existenceOfDriver, List<int> passengerIds)
         {
             CarpoolId = carpoolId;
@@ -32,7 +32,7 @@ namespace TecAlliance.Carpool.Data.Models
             PassengerIds = passengerIds;
         }
         //Standardconstructor for creating new object without specific values
-        public Carpools()
+        public CarpoolEntity()
         { 
         }
     }
