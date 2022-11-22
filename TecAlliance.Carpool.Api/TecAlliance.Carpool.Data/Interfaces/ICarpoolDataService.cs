@@ -74,8 +74,7 @@ namespace TecAlliance.Carpool.Data.Interfaces
         /// <returns></returns>
         CarpoolEntity? ChangeCarpoolName(string carpoolName, int carpoolId);
 
-        List<int> GetPassengerIds();
-
+        List<int> GetPassengerIds(int carpoolId);
 
     }
 }

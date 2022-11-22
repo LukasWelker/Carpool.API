@@ -46,7 +46,7 @@ namespace TecAlliance.Carpool.Business.Services
             {
                 CarpoolEntity carpools = ConvertCarpoolDtosToCarpools(carpoolDtos);
                 carpoolDataService.CreateNewCarpool(carpools, userId);
-                List<int> passengerIds = carpoolDataService.GetPassengerIds();
+                List<int> passengerIds = carpoolDataService.GetPassengerIds(carpoolDtos.CarpoolId);
                 CarpoolDto carpool = ConvertCarpoolToCarpoolDto(carpools, passengerIds);
                 return carpool;
             }
@@ -60,7 +60,7 @@ namespace TecAlliance.Carpool.Business.Services
         public CarpoolDto GetSpecificCarpool(int Id)
         {
             CarpoolEntity carpool = carpoolDataService.SearchForSpecificCarpoolInCsvAndReadIt(Id);
-            List<int> passengerIds = carpoolDataService.GetPassengerIds();
+            List<int> passengerIds = carpoolDataService.GetPassengerIds(Id);
             CarpoolDto carpooldto = ConvertCarpoolToCarpoolDto(carpool, passengerIds);
             return carpooldto;
         }
@@ -76,7 +76,7 @@ namespace TecAlliance.Carpool.Business.Services
             List<CarpoolDto> allCarpools = new List<CarpoolDto>();
             foreach (CarpoolEntity carpool in everyCarpool)
             {
-                List<int> passengerIds = carpoolDataService.GetPassengerIds();
+                List<int> passengerIds = carpoolDataService.GetPassengerIds(carpool.CarpoolId);
                 CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool, passengerIds);
                 allCarpools.Add(carpoolDto);
             }
@@ -162,7 +162,7 @@ namespace TecAlliance.Carpool.Business.Services
         public CarpoolDto ConnectionToChangeCarpoolName(string carpoolName, int carpoolId)
         {
             CarpoolEntity carpool = carpoolDataService.ChangeCarpoolName(carpoolName, carpoolId);
-            List<int> passengerIds = carpoolDataService.GetPassengerIds();
+            List<int> passengerIds = carpoolDataService.GetPassengerIds(carpoolId);
             CarpoolDto carpoolDto = ConvertCarpoolToCarpoolDto(carpool, passengerIds);
             return carpoolDto;
         }
@@ -177,6 +177,6 @@ namespace TecAlliance.Carpool.Business.Services
             carpoolDataService.LeaveCarpool(carpoolId, userId);
         }
         //value can be almost everything in this example it can be carpoolId etc. and the path is alos variable but in the given example it is  the Carpoolfile.
-
+       
     }
 }

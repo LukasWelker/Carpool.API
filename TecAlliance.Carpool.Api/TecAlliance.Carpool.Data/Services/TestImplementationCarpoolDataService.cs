@@ -37,6 +37,7 @@ namespace TecAlliance.Carpool.Data.Services
                 connection.Open();
                 command.ExecuteNonQuery();
             }
+            AddUserToCarpool(carpools.CarpoolId, userId);
         }
 
 
@@ -114,7 +115,6 @@ namespace TecAlliance.Carpool.Data.Services
         }
         public void DeleteSpecificCarpool(int Id)
         {
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string queryString = $"DELETE FROM Carpool WHERE Carpool.CarpoolId = @Id";
@@ -222,15 +222,17 @@ namespace TecAlliance.Carpool.Data.Services
 
 
         #region Helper Methods
-
-        public List<int> GetPassengerIds()
+        
+        public List<int> GetPassengerIds(int carpoolId)
         {
             List<int> passengerIds = new List<int>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 //SQL-Injection 
-                string queryString = $"SELECT * FROM Users";
+                string queryString = $"SELECT * FROM CarpoolUsers WHERE CarpoolId = @carpoolId";
                 SqlCommand command = new SqlCommand(queryString, connection);
+                command.Parameters.Add("@carpoolId", System.Data.SqlDbType.Int);
+                command.Parameters["@carpoolId"].Value = carpoolId;
                 //SQL-Injection End
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
