@@ -27,11 +27,11 @@ namespace TecAlliance.Carpool.Business.SampleProvider
                 Time = "09:00",
                 Seatcount = 5,
                 ExistenceOfDriver = 10,
-                PassengerInfoDto = new List<PassengerInfoDto>() 
-                { 
-                    new PassengerInfoDto() 
-                    { 
-                        PassengerId = 1, 
+                PassengerInfoDto = new List<PassengerInfoDto>()
+                {
+                    new PassengerInfoDto()
+                    {
+                        PassengerId = 1,
                         PassengerName = "Itachi"
                     }
                 }
