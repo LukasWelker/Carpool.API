@@ -32,8 +32,8 @@ namespace TecAlliance.Carpool.Business.Services
         public CarpoolDto CreateNewCarpool(CarpoolDto carpoolDtos, int userId)
         {
             //basic Errorhandling
-            if (string.IsNullOrEmpty(carpoolDtos.CarpoolName) || string.IsNullOrEmpty(carpoolDtos.Start) || string.IsNullOrEmpty(carpoolDtos.Destination) || string.IsNullOrEmpty(carpoolDtos.Time) ||
-                 string.IsNullOrEmpty(carpoolDtos.ExistenceOfDriver))
+            if (string.IsNullOrEmpty(carpoolDtos.CarpoolName) || string.IsNullOrEmpty(carpoolDtos.Start)
+                || string.IsNullOrEmpty(carpoolDtos.Destination) || string.IsNullOrEmpty(carpoolDtos.Time))
             {
                 throw new ArgumentNullException("Ungültige Eingabe");
             }
@@ -90,7 +90,7 @@ namespace TecAlliance.Carpool.Business.Services
             intListOfIds.Add(carpoolDtos.CarpoolId);
             //creating a new Carpools object with the following properties and save the newly created object in a variable from type Carpools
             CarpoolEntity convertedCarpools = new CarpoolEntity(carpoolDtos.CarpoolId, carpoolDtos.CarpoolName, carpoolDtos.Start,
-                carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, carpoolDtos.ExistenceOfDriver, intListOfIds);
+                carpoolDtos.Destination, carpoolDtos.Time, carpoolDtos.Seatcount, Convert.ToInt32(carpoolDtos.ExistenceOfDriver), intListOfIds);
             return convertedCarpools;
         }
 
@@ -111,7 +111,7 @@ namespace TecAlliance.Carpool.Business.Services
                 newPassengerInfoList.Add(passengerDto);
             }
             var convertedCarpoolDto = new CarpoolDto(carpools.CarpoolId, carpools.CarpoolName, carpools.Start,
-                carpools.Destination, carpools.Time, carpools.Seatcount, carpools.ExistenceOfDriver, newPassengerInfoList);
+                carpools.Destination, carpools.Time, carpools.Seatcount, Convert.ToInt32(carpools.ExistenceOfDriver), newPassengerInfoList);
             //Liste aus Objekten muss ich hinzufügen diese:  List<PassengerInfo> passengerInfos
             return convertedCarpoolDto;
         }

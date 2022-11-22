@@ -15,12 +15,12 @@ namespace TecAlliance.Carpool.Data.Models
         public string Destination { get; set; }
         public string Time { get; set; }
         public int Seatcount { get; set; }
-        public string ExistenceOfDriver { get; set; }
+        public int ExistenceOfDriver { get; set; }
         public List<int> PassengerIds{ get; set; }
 
         //Ovverride standard constructor
         public CarpoolEntity(int carpoolId, string carpoolName, string start, string destination, string time, int seatcount,
-            string existenceOfDriver, List<int> passengerIds)
+            int existenceOfDriver, List<int> passengerIds)
         {
             CarpoolId = carpoolId;
             CarpoolName = carpoolName;

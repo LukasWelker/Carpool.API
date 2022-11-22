@@ -26,7 +26,7 @@ namespace TecAlliance.Carpool.Business.SampleProvider
                 Destination = "Sunagakure",
                 Time = "09:00",
                 Seatcount = 5,
-                ExistenceOfDriver = "Yes",
+                ExistenceOfDriver = 10,
                 PassengerInfoDto = new List<PassengerInfoDto>() 
                 { 
                     new PassengerInfoDto() 

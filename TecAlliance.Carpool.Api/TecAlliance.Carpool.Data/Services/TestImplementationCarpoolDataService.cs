@@ -32,12 +32,14 @@ namespace TecAlliance.Carpool.Data.Services
             //PrintObjectIntoCsv(carpools);
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string queryString = $"INSERT INTO Carpool (CarpoolName,Startlocation, Destination,Seatcount) VALUES('{carpools.CarpoolName}', '{carpools.Start}', '{carpools.Destination}', '{carpools.Seatcount}')";
+                string queryString = $"INSERT INTO Carpool (CarpoolName,Startlocation, Destination,Seatcount,DriverId) VALUES('{carpools.CarpoolName}', '{carpools.Start}', '{carpools.Destination}', '{carpools.Seatcount}', @userId)";
                 SqlCommand command = new SqlCommand(queryString, connection);
+                command.Parameters.Add("@userId", System.Data.SqlDbType.Int);
+                command.Parameters["@userId"].Value = userId;
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            AddUserToCarpool(carpools.CarpoolId, userId);
+            //AddUserToCarpool(carpools.CarpoolId, userId);
         }
 
 
@@ -61,6 +63,7 @@ namespace TecAlliance.Carpool.Data.Services
                         carpools.Start = reader["Startlocation"].ToString();
                         carpools.Destination = reader["Destination"].ToString();
                         carpools.Seatcount = Convert.ToInt32(reader["Seatcount"]);
+                        carpools.ExistenceOfDriver = Convert.ToInt32(reader["DriverId"]);
                         listOfCarpools.Add(carpools);
                     }
                 }

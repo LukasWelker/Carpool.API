@@ -15,14 +15,14 @@ namespace TecAlliance.Carpool.Business.Models
         public string Destination { get; set; }
         public string Time { get; set; }
         public int Seatcount { get; set; }
-        public string ExistenceOfDriver { get; set; }
+        public int ExistenceOfDriver { get; set; }
         // Property is a List of PassengerInfoDto Objects
         public List<PassengerInfoDto> PassengerInfoDto { get; set; }
 
 
         //public string UserName  { get; set; }
 
-        public CarpoolDto(int carpolId, string carpoolName, string start, string destination, string time, int seatcount, string existenceOfDriver, List<PassengerInfoDto> passengerInfoDto)
+        public CarpoolDto(int carpolId, string carpoolName, string start, string destination, string time, int seatcount, int existenceOfDriver, List<PassengerInfoDto> passengerInfoDto)
         {
             CarpoolId = carpolId;
             CarpoolName = carpoolName;
